@@ -1,0 +1,70 @@
+## Theory
+
+Philosophers take turn
+eating
+sleeping
+thinking
+
+Each philosopher is its own thread
+
+To eat, a philosopher needs to lock his left fork and right fork, which are shared with other threads
+To lock forks, use mutexes so a thread has to wait for another to access a value in memory
+
+There are as many forks as philosophers (1 philosopher will die, it only has 1 fork)
+
+Program params are the amount of philosophers, and various time settings like how long they can survive without eating
+Too strict params mean the philosophers necessarily have to die
+
+Good params should allow philosophers to stay alive
+
+The program will print what philosophers are doing (e.g "Philosopher 1 is eating"), along with maybe a timestamp
+
+Philosophers spend a certain amount of time eating
+
+They spend a certain amount of time sleeping after eating (mandatory)
+
+They then wake up and can either wait (thinking) or start eating again, if the forks are available
+
+Philosophers shouldn't trade info with each other or know when others are about to die.
+They should all just adopt a general strategy that will work optimally for everyone.
+Logically, philosophers should at the very least know their number and be able to adapt their strategy based on it. (nothing seems to prevent it in the subject)
+
+## Concrete
+
+./philosophers [num_philosophers] [time_to_die] [time_to_eat] [time_to_sleep] [number_of_times_to_eat]
+
+Time values are expressed in MILLISECONDS
+
+The last argument is optional. Without it, the simulation runs forever or until a philosopher dies (Ctrl+C to stop it).
+With it, once every philosopher has eaten AT LEAST the number of times to eat, the simulation stops (philosophers continue being simulated after reaching the target and can still die)
+
+Philosophers have a number ranging from 1 to num_philo. They sit around a round table so 1 sits next to 2 and N
+
+State changes need to be displayed as follows:
+
+timestamp_in_ms X has taken a fork
+				  is eating
+					 sleeping
+					 thinking
+				  died
+
+Messages of death must be displayed within 10ms of actual death (.. ?)
+
+## Useful functions
+
+printf - better than ft_printf (faster)
+
+memset - better than ft_memset (faster)
+
+pthread_create
+pthread_detach
+pthread_join
+pthread_mutex_init
+pthread_mutex_destroy
+pthread_mutex_lock
+pthread_mutex_unlock
+
+
+## Bonus
+
+Use semaphores... TBD

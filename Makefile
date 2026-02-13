@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/01/17 16:06:55 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/13 20:09:46 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ OBJ			= $(SRC:%.c=$(BUILDDIR)/%.o)
 DEP			= $(OBJ:.o=.d)
 
 # Output binary
-NAME		= a.out
+NAME		= philo
 
 # Libraries
 LIB			=
