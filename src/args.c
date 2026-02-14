@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:23:51 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/14 16:05:11 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/14 19:53:53 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	parse_args(t_prog *d, char **av)
 		|| ft_atox(av[2], 0, &d->time.die, sizeof(d->time.die) | ATOX_U) < 0
 		|| ft_atox(av[3], 0, &d->time.eat, sizeof(d->time.eat) | ATOX_U) < 0
 		|| ft_atox(av[4], 0, &d->time.sleep, sizeof(d->time.sleep) | ATOX_U) < 0
-		|| (av[5] && ft_atox(av[1], 0, &d->time.eat_limit,
+		|| (av[5] && ft_atox(av[5], 0, &d->time.eat_limit,
 				sizeof(d->time.eat_limit) | ATOX_U) < 0))
 		error_out(d, ERR_ARG);
 }

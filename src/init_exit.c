@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:06:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/14 16:08:53 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/14 19:51:38 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	exit_prog(t_prog *d, int exitval)
 
 void	print_usage(void)
 {
-	printf("philo:\n\t./philo   number_of_philosophers  time_to_die   \
-time_to_eat   time_to_sleep   [number_of_times_to_eat]\n");
+	printf("./philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
+ [number_of_times_each_philosopher_must_eat]\n");
 	exit(0);
 }
 
