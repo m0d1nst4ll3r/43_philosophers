@@ -6,17 +6,20 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/02/13 20:09:46 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/14 16:02:01 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Source files
-CFILES		= main.c
+CFILES		= main.c \
+			  init_exit.c \
+			  args.c
 SRCDIR		= src
 SRC			= $(addprefix $(SRCDIR)/, $(CFILES))
 
 # Header directories
-INCDIR		= inc
+INCDIR		= inc \
+			  libft/inc
 
 # Build directory
 BUILDDIR	= .build
@@ -29,8 +32,10 @@ DEP			= $(OBJ:.o=.d)
 NAME		= philo
 
 # Libraries
-LIB			=
-LINK		=
+LIB			= $(LIBFT)
+LINK		= -lpthread
+LIBFT		= libft/libft.a
+LIBFT_REPO	= https://github.com/m0d1nst4ll3r/43_mylibft
 
 # Compiler settings
 CC			= cc
@@ -47,9 +52,13 @@ all:		$(NAME)
 $(NAME):	$(OBJ) $(LIB)
 			$(CC) $(CFLAGS) $^ $(LINK) -o $@
 
+# Clone lib repos
+libft:
+			git clone $(LIBFT_REPO) $@
+
 # Build libraries
-$(LIB):
-					$(MAKE) -C $(@D)
+$(LIBFT):	libft
+			$(MAKE) -C $(@D)
 
 # Compile source -> object (auto-create directories)
 $(BUILDDIR)/%.o: %.c
