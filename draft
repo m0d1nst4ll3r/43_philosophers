@@ -65,6 +65,120 @@ pthread_mutex_lock
 pthread_mutex_unlock
 
 
+## Program planning
+
+Look at philo.h structures to get a sense of what I've planned already.
+
+Continuing from there...
+
+0. Init
+	- To add all addresses that I've added so far
+		- threads
+		- philos
+		- forks
+1. Parse args (done)
+	- This sets arg values
+		- num philos
+		- time to die
+		- to eat
+		- to sleep
+		- meals to end
+2. Prepare sim (WIP)
+	- Malloc everything needed
+		- threads
+		- philos
+		- forks
+		- anything fails = error_out with ERR_MAL
+	- Create all mutexes
+		- forks
+		- philo death time
+		- philo meals
+		- print
+		- end
+	- Set all philo values not sensitive to start_time
+		- to die, eat, sleep (simple copy)
+	- Set all philo addresses properly
+		- forks
+		- print mutex
+		- end mutex
+		- start timeval
+		- is end of sim bool
+	- Initialize all values
+		- philo meals eaten to 0
+		- is end of sim to false
+3. Prepare threads
+	- Lock print mutex (also acts as start cause why the fuck not)
+		- if mutex fails, error out with ERR_MUT
+	- Run a loop to pthread_create
+		- Assign philo id from loop iterator
+		- Pthread create
+			- if it fails, call special pthread failure func which sets end of sim to true, unlocks print mutex and joins all previous (created) threads then error out with ERR_PTC
+			- join can also fail in which case just print that it failed and do not error out, we're already joining and erroring out anyway
+	- Get time of day to start time
+		- if it fails, call special func again but with ERR_GTD (this will join)
+	- In a loop, set each philo death timer to start + to_die
+		- only do add once to save on time
+	- Unlock mutex
+4. Supervise sim
+	- Infinite loop with a usleep to not spam CPU
+	- On every cycle, verify death timers in a loop
+		- this requires a gettimeofday which can fail -> set end of sim and call special func
+		- this requires using mutexes, go find them in philos[i].mutex.death_time
+		- if someone died, lock print mutex instantly
+			- lock end mutex
+				- set end to true
+			- unlock end mutex
+			- print death message with philo's death timer - start
+		- unlock print mutex
+		- exit infinite loop after which is a join anyway
+	- Also verify meals_eaten if limit is not 0, in a loop too
+		- if meals are all good
+			- lock end mutex
+				- set end to true
+			- unlock
+		- exit infinite loop after which is a join
+	- After loop is a join, if any join fails, error out after all joins are done with ERR_PTJ
+5. Exit prog
+	- We've joined already, nothing remains but to...
+	- Destroy all mutexes
+		- forks
+		- philo death time
+		- philo meals
+		- print
+		- end
+	- Free all addresses
+		- philos
+		- threads
+		- forks
+
+
+6. Philo logic
+	- Waited for print mutex
+	- Something special for strategy, haven't decided yet
+	- Start infinite loop
+		- Think
+		- Eat
+		- Sleep
+	- Each of these 3 actions (think, eat, sleep) has 3 phases
+		- Already set gettimeofday as soon as the action starts, write into last_action
+		- lock print mutex, print (using last_action), unlock
+		- if time for action is not 0, use gettimeofday to know how much time passed waiting for mutex to unlock
+			- compare that value with last_action
+		- usleep of the required amount of time - the time difference
+	- Note that we can try without this time difference thing, but the slower the computer, the more likely it is that we'll have drift
+	- Note that for eating, we have to lock lfork and rfork before setting last_action, and only release them after the usleep
+
+
+
+
+
+
+
+
+
+
+
+
 ## Bonus
 
 Use semaphores... TBD
