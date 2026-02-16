@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/02/16 06:50:52 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/16 06:57:28 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,7 +59,7 @@ $(NAME):	$(OBJ) $(LIB)
 
 # Build libraries
 $(LIBFT):
-			@if [ ! -d libft ]; then git clone $(LIBFT_REPO) libft; fi
+			@if [ ! -d $(dir $(LIBFT)) ]; then git clone $(LIBFT_REPO) $(dir $(LIBFT)); fi
 			$(MAKE) -C $(@D)
 
 # Compile source -> object (auto-create directories)
