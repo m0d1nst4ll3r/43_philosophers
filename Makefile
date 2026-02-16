@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/02/16 06:43:31 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/16 06:50:52 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,7 +55,7 @@ all:		$(NAME)
 
 # Link
 $(NAME):	$(OBJ) $(LIB)
-			$(CC) $(CFLAGS) $^ $(LINK) -o $@
+			$(CC) $^ $(LINK) -o $@
 
 # Build libraries
 $(LIBFT):
@@ -63,7 +63,7 @@ $(LIBFT):
 			$(MAKE) -C $(@D)
 
 # Compile source -> object (auto-create directories)
-$(BUILDDIR)/%.o: %.c
+$(BUILDDIR)/%.o: %.c | $(LIB)
 			@mkdir -p $(@D)
 			$(CC) $(CFLAGS) -c -o $@ $<
 
