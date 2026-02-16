@@ -6,14 +6,14 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 03:37:52 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/16 10:27:57 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
-# define SUPERVISOR_USLEEP	1000 // Limits how often supervisor checks on philos
+# define SUPERVISOR_USLEEP	2000 // Limits how often supervisor checks on philos
 
 # define EDEFAULT	"Unknown error"
 # define EMALLOC	"Malloc error"
@@ -21,7 +21,7 @@
 # define EPHILNUM	"Need at least 1 philosopher"
 
 // TODO Remove libft eventually and bake functions into program
-# include "libft.h"		// ft_atox, ft_free, ft_time_diff
+# include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
 # include <stdio.h>		// printf
 # include <pthread.h>	// pthread
 # include <sys/time.h>	// gettimeofday

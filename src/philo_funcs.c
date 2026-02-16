@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:43:04 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 06:20:56 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/16 10:27:47 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static bool	is_end_of_sim(t_philo *d)
 	bool	is_end_of_sim;
 
 	pthread_mutex_lock(d->mutex.is_end_of_sim);
-	is_end_of_sim = d->time.is_end_of_sim;
+	is_end_of_sim = *d->time.is_end_of_sim;
 	pthread_mutex_unlock(d->mutex.is_end_of_sim);
 	return (is_end_of_sim);
 }
@@ -61,7 +61,7 @@ bool	p_eat(t_philo *d)
 	gettimeofday(&d->time.current, NULL);
 	pthread_mutex_lock(&d->mutex.death_time);
 	d->time.death = ft_time_add(d->time.current, d->time.to_die * 1000);
-	pthread_mutex_lock(&d->mutex.death_time);
+	pthread_mutex_unlock(&d->mutex.death_time);
 	printf("%d %d is eating\n",
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
 	pthread_mutex_unlock(d->mutex.print);
