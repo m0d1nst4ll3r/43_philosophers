@@ -6,20 +6,37 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:06:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/14 19:51:38 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/16 03:31:19 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+static void	destroy_mutexes(t_prog *d)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < d->num_philos)
+	{
+		pthread_mutex_destroy(&d->philos[i].mutex.lfork);
+		pthread_mutex_destroy(&d->philos[i].mutex.death_time);
+		i++;
+	}
+	pthread_mutex_destroy(&d->mutex.print);
+	pthread_mutex_destroy(&d->mutex.is_end_of_sim);
+	pthread_mutex_destroy(&d->mutex.stuffed_philos);
+}
+
 void	init_prog(t_prog *d)
 {
-	d->philo = NULL;
+	d->philos = NULL;
 }
 
 void	exit_prog(t_prog *d, int exitval)
 {
-	ft_free((void *)&d->philo);
+	destroy_mutexes(d);
+	ft_free((void *)&d->philos);
 	exit(exitval);
 }
 
@@ -33,7 +50,7 @@ void	print_usage(void)
 void	error_out(t_prog *d, char *err_str)
 {
 	if (!err_str)
-		err_str = DEFAULT_ERR;
+		err_str = EDEFAULT;
 	dprintf(2, "philo: %s", err_str);
 	if (errno)
 		dprintf(2, ": %s", strerror(errno));

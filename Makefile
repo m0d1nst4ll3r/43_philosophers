@@ -6,14 +6,19 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/02/14 16:02:01 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/16 06:43:31 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Source files
 CFILES		= main.c \
+			  parse_args.c \
 			  init_exit.c \
-			  args.c
+			  prepare_sim.c \
+			  supervise_sim.c \
+			  end_sim.c \
+			  philo_funcs.c \
+			  philo.c
 SRCDIR		= src
 SRC			= $(addprefix $(SRCDIR)/, $(CFILES))
 
@@ -52,12 +57,9 @@ all:		$(NAME)
 $(NAME):	$(OBJ) $(LIB)
 			$(CC) $(CFLAGS) $^ $(LINK) -o $@
 
-# Clone lib repos
-libft:
-			git clone $(LIBFT_REPO) $@
-
 # Build libraries
-$(LIBFT):	libft
+$(LIBFT):
+			@if [ ! -d libft ]; then git clone $(LIBFT_REPO) libft; fi
 			$(MAKE) -C $(@D)
 
 # Compile source -> object (auto-create directories)
