@@ -23,3 +23,19 @@ Roadmap:
 - Or I can just go for it and say fuck it, at worst it's one wasted point, it's fine
 - Depending on the results, either recode some stuff, or do the bonuses
 - Then move on to minishell
+
+
+
+Bonus planning (semaphores):
+new funcs:
+fork
+kill
+pthread_detach (do we need this?)
+waitpid
+sem_open
+sem_close
+sem_post
+sem_wait
+sem_unlink
+
+Step 1. understand semaphores. Make a test main.
