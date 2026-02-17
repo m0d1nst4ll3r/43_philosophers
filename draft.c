@@ -28,136 +28,99 @@ bool	is_sem_available(char *sem_name)
 	return (true);
 }
 
-//	Philo process
-//
-// 1. Prepare local sem
-// 2. Prepare local help thread
-// 3. Post ready
-// 4. Wait start
-// 5. Run routine
-char	*get_local_sem_name(int philo_id)
+void	philo_routine(t_prog *d)
 {
-	char	*sem_name;
-	char	*philo_id_str;
-
-	philo_id_str = ft_itoa(philo_id);
-	if (!philo_id_str)
-		return (NULL);
-	sem_name = ft_join(PHILO_LOCAL_SEM_NAME, philo_id_str);
-	free(philo_id_str);
-	return (sem_name);
-}
-
-static bool	create_local_sem(t_prog *d)
-{
-	char	*local_sem_name;
-
-	local_sem_name = get_local_sem_name(d->philo_id);
-	if (!local_sem_name)
-	{
-		write(2, PHILO_ERR_MALLOC, sizeof(PHILO_ERR_MALLOC) - 1);
-		sem_post(d->sem.global.critical_error);
-		error_out(d);
-	}
-	d->sem.philo.stop_var =  create_sem(local_sem_name, 1);
-	free(local_sem_name);
-	if (d->sem.philo.stop_var == SEM_FAILED)
-	{
-		write(2, PHILO_ERR_SEM, sizeof(PHILO_ERR_SEM) - 1);
-		sem_post(d->sem.global.critical_error);
-		error_out(d);
-	}
-}
-
-static void	prepare_monitor_data(t_prog *d, t_philo_stop_monitor *monitor_data)
-{
-	monitor_data->global_stop_sem = d->sem.global.stop;
-	monitor_data->local_stop_var_sem = d->sem.philo.stop_var;
-	monitor_data->local_stop
-}
-
-static void	launch_thread(t_prog *d)
-{
-	if (pthread_create(&d->thread.philo.stop_monitor, NULL, philo_stop_monitor,
-				);
-	if ()
-}
-
-void	philo_process(t_prog *d)
-{
-	t_philo_stop_monitor monitor_data;
-
-	create_local_sem(d);
-	prepare_monitor_data(d, &monitor_data);
-	// thread
-	sem_wait(d->sem.shared.start);
-	philo_routine(d);
-	pthread_join();
-}
-
-void	philo_routine(t_main *main)
-{
-	t_philo	philo;
-
-	init_philo();
 	wait_start();
 	philo_loop();
 	cleanup_philo();
 }
 
-void	init_supervisor(t_supervisor *supervisor, const t_main *main)
-{
-	supervisor->num_philos = main->num_philos;
-	supervisor->rules = main->rules;
-	supervisor->time = main->time;
-	supervisor->sem.global = main->global_sem;
-}
-
-void	supervisor_routine(t_main *main)
+void	supervisor_routine(t_prog *d)
 {
 	t_supervisor	supervisor;
 
-	init_supervisor(&supervisor, main);
+	init_supervisor(&supervisor, d);
 	launch_start();
 	supervisor_loop();
 	cleanup_supervisor();
 }
 
-void	do_forks(t_main *main)
+void	do_forks(t_prog *d)
 {
 }
 
-void	check_sems_available(t_main *main)
+void	check_sems_available(t_prog *d)
+{
+	int	i;
+
+	if (!is_sem_available(SEM_NAME_START)
+		|| !is_sem_available(SEM_NAME_DEAD)
+		|| !is_sem_available(SEM_NAME_STOP)
+		|| !is_sem_available(SEM_NAME_ERROR))
+		error_out(d, ESEMAVAIL);
+	i = 0;
+	while (i < d->rules.num_philos)
+	{
+		if (!is_sem_available(d->sem.stuffed[i]))
+			error_out(d, ESEMAVAIL);
+		i++;
+	}
+}
+
+void	init_stuffed_sem()
 {
 }
 
-void	init_sem(t_main *main)
+void	init_sem(t_prog *d)
 {
+	d->sem.forks = create_sem(SEM_NAME_FORKS, d->rules.num_philos);
+	d->sem.print = create_sem(SEM_NAME_PRINT, 1);
+	if (d->sem.forks == SEM_FAILED || d->sem.print == SEM_FAILED)
+		error_out(d, ESEM);
 }
 
-void	get_args(t_main *main)
+void	get_args(t_prog *d)
 {
+	d->rules.meals_to_end = 0;
+	if (ft_atox(av[1], 0, &d->rules.num_philos,
+			sizeof(d->rules.num_philos) | ATOX_U) < 0
+		|| ft_atox(av[2], 0, &d->rules.time_to_die,
+			sizeof(d->rules.time_to_die) | ATOX_U) < 0
+		|| ft_atox(av[3], 0, &d->rules.time_to_eat,
+			sizeof(d->rules.time_to_eat) | ATOX_U) < 0
+		|| ft_atox(av[4], 0, &d->rules.time_to_sleep,
+			sizeof(d->rules.time_to_sleep) | ATOX_U) < 0
+		|| (av[5] && ft_atox(av[5], 0, &d->rules.meals_to_end,
+				sizeof(d->rules.meals_to_end) | ATOX_U) < 0))
+		error_out(d, EARGS);
+	if (!d->rules.num_philos)
+		error_out(d, EPHILNUM);
 }
 
-void	init_main(t_main *main)
+void	init_prog(t_prog *d)
 {
+	d->sem.forks = SEM_FAILED;
+	d->sem.print = SEM_FAILED;
+	d->children_pids = NULL;
+	d->sem_name.stuffed = NULL;
 }
 
 int	main(int ac, char **av)
 {
-	t_main	main;
+	t_prog	data;
 
 	if (ac != 5 && ac != 6)
 	{
 		print_usage();
 		return (0);
 	}
-	init_main(&main);
-	get_args(&main);
-	init_sem(&main);
-	check_sems_avail(&main);
-	do_forks(&main);
-	cleanup_main(&main);
+	init_prog(&data);
+	get_args(&data);
+	init_sem(&data);
+	init_stuffed_sem(&data);
+	check_sems_avail(&data);
+	do_forks(&data);
+	cleanup_data(&data);
 	return (0);
 }
 

@@ -62,9 +62,9 @@ When the value reaches num_philos during an entire loop, everyone's ready/stuffe
 For all other 4 sems, 2 of them go supervisor->philo, the other 2 go the other way.
 
 Both the sender and the receiver need to know the name of the sem, to attempt to open it or create it.
+The name has to be decided in advance, and thus malloc'd. It will be cloned in the forks.
 
-
-
+To avoid vulnerability problems (or make it a bit harder at least) I can create a timestamp hash and put it in the semaphore's name. Or I can just shrug and say fuck it. (probably the latter)
 
 
 
