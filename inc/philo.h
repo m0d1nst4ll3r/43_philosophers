@@ -52,98 +52,54 @@
 //
 
 
-// ============================== THREAD STRUCTS ===============================
-typedef struct s_philo_stop_monitor
-{
-	sem_t	*global_stop_sem;
-	sem_t	*local_stop_var_sem;
-	bool	*local_stop;
-}	t_philo_stop_monitor;
-
-typedef struct s_supervisor_death_monitor
-{
-	sem_t	*local_death_var_sem;
-	sem_t	*global_death_sem;
-	bool	*is_philo_dead;
-}	t_supervisor_death_monitor;
-
-typedef struct s_supervisor_stuffed_monitor
-{
-	sem_t	*local_stuffed_var_sem;
-	sem_t	*global_stuffed_sem;
-	bool	*are_philos_stuffed;
-	int		num_philos;
-}	t_supervisor_stuffed_monitor;
-
 // ================================ SEMAPHORES =================================
-typedef struct s_sem_supervisor
-{
-	sem_t	*dead_var;
-	sem_t	*stuffed_var;
-}	t_sem_supervisor;
-
-typedef struct s_sem_philo
-{
-	sem_t	*stop_var;
-}	t_sem_philo;
-
-typedef struct s_sem_global
+typedef struct s_sem
 {
 	sem_t	*forks;
 	sem_t	*print;
-	sem_t	*ready;
-	sem_t	*start;
-	sem_t	*stop;
-	sem_t	*dead;
-	sem_t	*stuffed;
-	sem_t	*critical_error;
-}	t_sem_global;
-
-typedef struct s_sem;
-{
-	t_sem_global		global;
-	t_sem_philo			philo;
-	t_sem_supervisor	supervisor;
 }	t_sem;
 
-// ============================== THREAD OBJECTS ===============================
-typedef struct s_thread_philo
+// =================================== RULES ===================================
+typedef struct s_rules
 {
-	pthread_t	stop_monitor;
-}	t_thread_philo;
-
-typedef struct s_thread_supervisor
-{
-	pthread_t	death_monitor;
-	pthread_t	stuffed_monitor;
-}	t_thread_supervisor;
-
-typedef struct s_thread
-{
-	t_thread_supervisor	supervisor;
-	t_thread_philo		philo;
-}	t_thread;
+	unsigned int	time_to_die;
+	unsigned int	time_to_eat;
+	unsigned int	time_to_sleep;
+	unsigned int	meals_to_end;
+}	t_rules;
 
 // =================================== TIME ====================================
 typedef struct s_time
 {
-	unsigned int	to_die;
-	unsigned int	to_eat;
-	unsigned int	to_sleep;
-	unsigned int	meals_to_end;
 	struct timeval	start;
 	struct timeval	current;
 }	t_time;
 
 // ================================ MAIN STRUCT ================================
-typedef struct s_prog
+typedef struct s_main
 {
 	unsigned int	num_philos;
-	int				philo_id;
+	t_rules			rules;
 	t_time			time;
-	t_sem			sem;
-	t_thread		thread;
-}	t_prog;
+	t_global_sem	global_sem;
+}	t_main;
+
+// =============================== PHILO STRUCT ================================
+typedef struct s_philo
+{
+	int				id;
+	t_rules			rules;
+	t_time			time;
+	t_philo_sem		sem;
+}	t_philo;
+
+// ============================= SUPERVISOR STRUCT =============================
+typedef struct s_supervisor
+{
+	unsigned int		num_philos;
+	t_time				time;
+	t_supervisor_sem	sem;
+}	t_supervisor;
 
 // init_exit.c
 void	init_prog(t_prog *d);

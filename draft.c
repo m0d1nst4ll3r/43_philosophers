@@ -15,51 +15,17 @@ sem_t	*create_sem(char *sem_name, int value)
 	return (new_sem);
 }
 
-// This only monitors the global death semaphore
-// Don't need to post global_death_sem since this is the only place it waits
-void	*death_monitor(void *p)
+bool	is_sem_available(char *sem_name)
 {
-	t_supervisor_death_monitor	*d;
+	sem_t	*new_sem;
 
-	d = p;
-	sem_wait(d->global_death_sem);
-	sem_wait(d->local_death_var_sem);
-	*d->is_philo_dead = true;
-	sem_post(d->local_death_var_sem);
-	return (NULL);
-}
-
-// This only monitors the global stuffed semaphore
-// Don't need to post global_stuffed_sem
-void	*stuffed_monitor(void *p)
-{
-	int							i;
-	t_supervisor_stuffed_monitor	*d;
-
-	d = p;
-	i = 0;
-	while (i < d->num_philos)
-	{
-		sem_wait(d->global_stuffed_sem);
-		i++;
-	}
-	sem_wait(d->local_stuffed_var_sem);
-	*d->are_philos_stuffed = true;
-	sem_post(d->local_stuffed_var_sem);
-	return (NULL);
-}
-
-// This only monitors the global stop semaphore
-// It doesn't post because the supervisor posts once for each philo anyway
-void	*philo_stop_monitor(void *p)
-{
-	t_philo_stop_monitor	*d;
-
-	d = p;
-	sem_wait(d->global_stop_sem);
-	sem_wait(d->local_stop_var_sem);
-	*d->local_stop = true;
-	sem_post(d->local_stop_var_sem);
+	sem_unlink(sem_name);
+	new_sem = sem_open(sem_name, O_CREAT | O_EXCL, 0600, 0);
+	if (new_sem == SEM_FAILED)
+		return (false);
+	sem_close(new_sem);
+	sem_unlink(sem_name);
+	return (true);
 }
 
 //	Philo process
@@ -90,7 +56,7 @@ static bool	create_local_sem(t_prog *d)
 	if (!local_sem_name)
 	{
 		write(2, PHILO_ERR_MALLOC, sizeof(PHILO_ERR_MALLOC) - 1);
-		sem_post(d->sem.shared.critical_error);
+		sem_post(d->sem.global.critical_error);
 		error_out(d);
 	}
 	d->sem.philo.stop_var =  create_sem(local_sem_name, 1);
@@ -98,25 +64,112 @@ static bool	create_local_sem(t_prog *d)
 	if (d->sem.philo.stop_var == SEM_FAILED)
 	{
 		write(2, PHILO_ERR_SEM, sizeof(PHILO_ERR_SEM) - 1);
-		sem_post(d->sem.shared.critical_error);
+		sem_post(d->sem.global.critical_error);
 		error_out(d);
 	}
 }
 
+static void	prepare_monitor_data(t_prog *d, t_philo_stop_monitor *monitor_data)
+{
+	monitor_data->global_stop_sem = d->sem.global.stop;
+	monitor_data->local_stop_var_sem = d->sem.philo.stop_var;
+	monitor_data->local_stop
+}
+
 static void	launch_thread(t_prog *d)
 {
-	if (pthread_create(&d->thread.philo.stop_monitor;
+	if (pthread_create(&d->thread.philo.stop_monitor, NULL, philo_stop_monitor,
+				);
 	if ()
 }
 
 void	philo_process(t_prog *d)
 {
+	t_philo_stop_monitor monitor_data;
+
+	create_local_sem(d);
+	prepare_monitor_data(d, &monitor_data);
 	// thread
 	sem_wait(d->sem.shared.start);
 	philo_routine(d);
+	pthread_join();
 }
 
-void	philo_routine(t_prog *d)
+void	philo_routine(t_main *main)
 {
-	
+	t_philo	philo;
+
+	init_philo();
+	wait_start();
+	philo_loop();
+	cleanup_philo();
 }
+
+void	init_supervisor(t_supervisor *supervisor, const t_main *main)
+{
+	supervisor->num_philos = main->num_philos;
+	supervisor->rules = main->rules;
+	supervisor->time = main->time;
+	supervisor->sem.global = main->global_sem;
+}
+
+void	supervisor_routine(t_main *main)
+{
+	t_supervisor	supervisor;
+
+	init_supervisor(&supervisor, main);
+	launch_start();
+	supervisor_loop();
+	cleanup_supervisor();
+}
+
+void	do_forks(t_main *main)
+{
+}
+
+void	check_sems_available(t_main *main)
+{
+}
+
+void	init_sem(t_main *main)
+{
+}
+
+void	get_args(t_main *main)
+{
+}
+
+void	init_main(t_main *main)
+{
+}
+
+int	main(int ac, char **av)
+{
+	t_main	main;
+
+	if (ac != 5 && ac != 6)
+	{
+		print_usage();
+		return (0);
+	}
+	init_main(&main);
+	get_args(&main);
+	init_sem(&main);
+	check_sems_avail(&main);
+	do_forks(&main);
+	cleanup_main(&main);
+	return (0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

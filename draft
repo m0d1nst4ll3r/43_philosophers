@@ -1,197 +1,67 @@
-16/02/2026
-
-Good to turn-in, with a few caveats:
-1. Sometimes the "died" message prints a time before the other messages
-	- Easy fix: instead of printing when the philo died, print current time
-	- If it doesn't matter for defense, who cares
-2. I'm not protecting pthread create, etc...
-	- Shouldn't be too hard to add the logic but I CBA
-	- Again if it doesn't matter for defense, who cares - funcs are never gonna fail
-3. Philos increment that one value
-	- Should be ok, but maybe defense says something somewhere about this
-	- Easy fix but annoying because the way I do it now should be fine
-4. Bonuses
-	- Semaphores. Can have some fun with it and learn something new.
-	- Depends how pressed for time I am, but I'd rather do it.
-
-Rest should be good. Program works well, behaves well, code is extra-clean.
-
-Roadmap:
-- Work on turning in FdF and getting 6 points
-- If during those 6 points I get a philosopher evaluation, great
-- If not, I can ask people I know
-- Or I can just go for it and say fuck it, at worst it's one wasted point, it's fine
-- Depending on the results, either recode some stuff, or do the bonuses
-- Then move on to minishell
-
-
-
-Bonus planning (semaphores):
-new funcs:
-fork
-kill
-pthread_detach (do we need this?)
-waitpid
-sem_open
-sem_close
-sem_post
-sem_wait
-sem_unlink
-
-Step 1. Understanding semaphores. Making a test main.
-
-I think I've got it:
-
-How semaphores work:
-- sem_open, name, O_CREAT | O_EXCL, 0644 (or whatever), 0
-This creates a semaphore. It needs a name, it's like a file, really. It'll need to be unlinked when we stop using it. Before it really unlinks, we have to close all the open channels to it (in all the forks). We get to tell it its starting value.
-- sem_post
-Increases the sem's value
-- sem_wait
-Decreases the sem's value. If the value is already 0, just wait.
-- sem_close
-Closes the channel to the sem so unlink can do its work (every process needs to close it).
-- sem_unlink
-Deletes the sem once it's closed by everything that has it open (forks have their own open channel if it was opened before)
-
-Basically if a process posts while another was waiting, the one that was waiting gets to do whatever comes after its wait.
-
-We need a semaphore with a value that's just the amount of philos (or forks). Philos will need to wait twice to eat - they need a strategy like in the base program, or we'll have a situation where all philos are all holding 1 fork and they all die.
-
-Since philos have to be new processes, they can't share info with simple variables, they don't have access to each other's memory. The only way to communicate is with semaphores.
-
-When a philo dies, it has to post a special "I'm dead" semaphore. The supervisor needs to be looking for this semaphore (sem_wait) and if it posts, it has to communicate to all the children that it's time to stop.
+Semaphore bonus, thread-less style:
 
-Similarly, there should be a "stuffed" semaphore. This one can be simpler: when a philo is stuffed, it posts. A supervisor thread then waits literally in a loop that iterates for num_philos, which will end when all philos have posted.
+Init values (addresses to NULL). Includes semaphores (if NULL at exit, do not attempt a close).
 
-Because sem_wait stops a thread in its tracks and forces it to hang, we need several threads for each process. For the main process (supervisor), we need at least 2 threads: one for deaths, one for stuffed_philos. Each philo also needs a thread that will look for the supervisor's signal to stop and return.
+Init args. Print usage or error.
 
-For a thread to communicate to the main thread (main loop), it needs its own semaphore, because it will be writing to a variable that the main thread will be reading. Since this can lead to data races, you need a semaphore.
+Init shared semaphores. Create all shared semaphores. Make sure they can be created, otherwise, exit.
 
+Make sure signal semaphores CAN be created, if not, exit.
+These semaphores are not created, but they will be eventually. If they already exist and we don't have perms, error.
 
+Fork in a loop. If any fork fails, create start semaphore and create stop semaphore. Forks will exit. Waitpid. Then error out.
 
+After fork in parent:
 
-Step 2. Planning.
+	Init supervisor
+	Create start sem
+	Launch supervisor routine
+	Cleanup supervisor
+	Waitpid
+	Cleanup program
+	Return
 
+After fork in child:
 
-Parsing works the same. But it's kinda the only thing that does.
+	Init philo
+	Try for open start sem in an infin loop
+	Launch philo routine
+	Cleanup philo
+	Return
 
-We need a ton of semaphores, threads, and forks:
 
-1 fork per philo
-1 thread per philo fork
-	- Thread that watches stop_semaphore
-		- waits, if it's posted, write to "stop" value
-			- this requires one more philo-specific semaphore (we will have num_philos of those)
-		- stop_semaphore needs to be posted num_philo times by supervisor for all children to hear it
-	- Rest of the logic is like base program, think, eat, sleep, even philos wait before eating
-	- Philos wait twice for their 2 forks
-	- There is a print semaphore shared by everyone
-	- same gettimeofday logic
-	- If stop, then simply post whatever was waited, close all semaphores, join the watcher thread (should be over already since it signalled stop), and then unlink the philo-specific semaphore
 
-main thread is supervisor (after sim starts)
-main thread needs 2 more threads
-	- Thread that watches dead_semaphore
-		- waits, if it's posted, write to "dead" value
-			- this requires its own semaphore (only for supervisor)
-		- this is shared by everyone, ANY post leads to "dead" (so multiple philos can post, it's fine)
-	- Thread that watches stuffed_semaphore
-		- waits num_philos posts, so EVERY child needs to post for this to reach its end trigger
-		- this is also shared by everyone
-		- writes to "stuffed" value
-			- this requires yet another semaphore (only for supervisor)
-	- Supervisor watches the 2 values in a loop
-	- If stuffed is true
-		- post num_philos times for the stop_semaphore
-		- wait_pid, then unlink all shared semaphores
-	- If dead is true
-		- post num_philos times for the stop_sem
-		- print dead message
-			- this HAS to be the last message printed, because there is a print semaphore, remember?
-		- wait_pid, unlink all shared semaphores
 
-Do note that semaphores need names. Do note that they have to be created, and one of them already existing needs to be an error handled nicely. Also note that since philos need their own semaphore, we need string manipulation to create a unique name for each philo's semaphore (can't all be the same).
 
-Summary of necessary forks, threads, semaphores:
 
-Threads:
-- Main supervisor thread
-	- dead watcher thread
-	- stuffed watcher thread
-- num_philos philo main threads
-	- stop watcher thread
 
-Forks:
-- num_philos forks
+sem_open strategy, for thread-less communication:
 
-Semaphores:
-- Shared semaphores (one for all - init before forks)
-	- stop sem
-	- print sem
-	- dead sem
-	- stuffed sem
-	- forks sem
-	- start sem
-- Supervisor-specific (init after forks)
-	- dead var sem
-	- stuffed var sem
-- Philo-specific (init in philo logic)
-	- stop var sem
+Info that needs to be communicated:
 
-Note that I haven't accounted for the "starting shot". In base program I use the print mutex, but for semaphores, you can't do that. You need to post as many times as there are philos, can't just pots once (or only one philo will start). Thus, we might need a start semaphore as well (not 100% sure).
-Note I also didn't account for thread starting BEFORE the starting shot. I need a ready_sem for the supervisor to know that all philos are ready and the sim can start. Because philos need some time to build their own sems.
+1. When all philos are ready, for supervisor to tell them all to start
+	-> Array
+2. When to start (supervisor sets)
+3. When a philo is dead
+4. When a philo is stuffed
+	-> Array
+5. Whether the sim is stopped
+6. If any philo ran into a critical error anywhere
 
-Can have one extra semaphore/supervisor thread for fatal errors, so supervisor can know to print an error and order everything to close and leave.
+For supervisor logic of checking on ready sem and stuffed sem:
+These sems exist in arrays of num_philos.
+The array will contain the name of the philo's sem and a bool.
+It will be checked in a loop.
+If the bool is false, check if sem_open can be done. If so, close it right away and set bool to true.
+If bool is true, just increment a value.
+When the value reaches num_philos during an entire loop, everyone's ready/stuffed.
 
 
-Note:
-- Could have made structs in a way that main thread does not even have a sem_t or pthread_t that only the philo is gonna use, and vice-versa
-	- *Could* have. However, I'm not the best programmer. I didn't plan it that way.
-	- Not a big deal. Just something for next time :)
-	- fork() duplicates everything, but I can create the supervisor struct after all the forks have happened
 
 
+For all other 4 sems, 2 of them go supervisor->philo, the other 2 go the other way.
 
-
-New method:
-
-Instead of using threads, we can use a semaphore trick.
-
-The reason we have threads is because we need to pass message between processes, and so far the only way I could imagine was using sempahores in the traditional sense with sem_wait. sem_wait hangs your process, making it wait indefinitely for a sem_post coming from elsewhere. This is a problem if you have other things to do than wait for this one single semaphore (e.g our supervisor needs to check for deaths AND stuffed counter).
-
-There is a way to receive a message from processes without hanging indefinitely, thus revoking the need for threads and simplifying the program in a way, although complexifying it in another.
-
-This way is using sem_open with a semaphore that does not exist, but will eventually if the signal sender decides to sem_open with O_CREAT. The logic is that you can sem_open WITHOUT O_CREAT to try and open a sem that does not exist. You can look at the return of this sem_open, if it is SEM_FAILED and errno is ENOENT, the signal sender still hasn't sent the signal.
-
-Then, the sender (e.g supervisor) just calls sem_open with O_CREAT to send the signal. The receiver (e.g philo)'s next sem_open will succeed, therefore signifying that the signal was sent and it's time to e.g stop.
-
-You could technically use this method to send any data of any kind since it is possible to create a binary communication channel out of semaphores.
-
-The caveat with this method is that you have to make sure the sem CAN be created before running your routine, because if it already exists, the entire plan is ruined.
-
-Another caveat is that if a malicious third party wanted to ruin your plans, they could launch their own program that creates the sem you're using for communication with enough permissions that you'll be able to open it, or not enough so that you never will, but one way or the other, this ruins your program without you being able to really safeguard against it. It's one possible vulnerability, but this is nitpicking for a school project and at least we're aware of it.
-
-
-Now just gotta decide which method to go for.
-No threads is simpler, but I've already started writing some threads logic and/or structures.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Both the sender and the receiver need to know the name of the sem, to attempt to open it or create it.
 
 
 
