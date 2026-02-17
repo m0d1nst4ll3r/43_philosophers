@@ -8,6 +8,11 @@
 # define EARGS		"Arguments have to be unsigned integers"
 # define EPHILNUM	"Need at least 1 philosopher"
 
+# define PHILO_ERR_MALLOC	"Malloc failure, aborting all processes\n"
+# define PHILO_ERR_SEM		"Sem creation failure, aborting all processes\n"
+
+# define PHILO_LOCAL_SEM_NAME	"philo_sem_"
+
 // TODO Remove libft eventually and bake functions into program
 # include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
 # include <stdio.h>		// printf
@@ -16,7 +21,6 @@
 # include <stdbool.h>	// bool
 # include <errno.h>		// errno
 # include <string.h>	// strerror
-
 
 //	Semaphore philosophers
 //
@@ -46,6 +50,9 @@
 // Philo thread
 //
 //
+
+
+// ============================== THREAD STRUCTS ===============================
 typedef struct s_philo_stop_monitor
 {
 	sem_t	*global_stop_sem;
@@ -68,7 +75,7 @@ typedef struct s_supervisor_stuffed_monitor
 	int		num_philos;
 }	t_supervisor_stuffed_monitor;
 
-// ========================== SEMAPHORES ==========================
+// ================================ SEMAPHORES =================================
 typedef struct s_sem_supervisor
 {
 	sem_t	*dead_var;
@@ -80,7 +87,6 @@ typedef struct s_sem_philo
 	sem_t	*stop_var;
 }	t_sem_philo;
 
-// May add add critical_error sem
 typedef struct s_sem_global
 {
 	sem_t	*forks;
@@ -90,6 +96,7 @@ typedef struct s_sem_global
 	sem_t	*stop;
 	sem_t	*dead;
 	sem_t	*stuffed;
+	sem_t	*critical_error;
 }	t_sem_global;
 
 typedef struct s_sem;
@@ -99,16 +106,7 @@ typedef struct s_sem;
 	t_sem_supervisor	supervisor;
 }	t_sem;
 
-typedef struct s_time
-{
-	unsigned int	to_die;
-	unsigned int	to_eat;
-	unsigned int	to_sleep;
-	unsigned int	meals_to_end;
-	struct timeval	start;
-	struct timeval	current;
-}	t_time;
-
+// ============================== THREAD OBJECTS ===============================
 typedef struct s_thread_philo
 {
 	pthread_t	stop_monitor;
@@ -126,13 +124,24 @@ typedef struct s_thread
 	t_thread_philo		philo;
 }	t_thread;
 
+// =================================== TIME ====================================
+typedef struct s_time
+{
+	unsigned int	to_die;
+	unsigned int	to_eat;
+	unsigned int	to_sleep;
+	unsigned int	meals_to_end;
+	struct timeval	start;
+	struct timeval	current;
+}	t_time;
+
+// ================================ MAIN STRUCT ================================
 typedef struct s_prog
 {
 	unsigned int	num_philos;
 	int				philo_id;
 	t_time			time;
 	t_sem			sem;
-	t_philo			philo;
 	t_thread		thread;
 }	t_prog;
 

@@ -145,6 +145,44 @@ Note I also didn't account for thread starting BEFORE the starting shot. I need 
 Can have one extra semaphore/supervisor thread for fatal errors, so supervisor can know to print an error and order everything to close and leave.
 
 
+Note:
+- Could have made structs in a way that main thread does not even have a sem_t or pthread_t that only the philo is gonna use, and vice-versa
+	- *Could* have. However, I'm not the best programmer. I didn't plan it that way.
+	- Not a big deal. Just something for next time :)
+	- fork() duplicates everything, but I can create the supervisor struct after all the forks have happened
+
+
+
+
+New method:
+
+Instead of using threads, we can use a semaphore trick.
+
+The reason we have threads is because we need to pass message between processes, and so far the only way I could imagine was using sempahores in the traditional sense with sem_wait. sem_wait hangs your process, making it wait indefinitely for a sem_post coming from elsewhere. This is a problem if you have other things to do than wait for this one single semaphore (e.g our supervisor needs to check for deaths AND stuffed counter).
+
+There is a way to receive a message from processes without hanging indefinitely, thus revoking the need for threads and simplifying the program in a way, although complexifying it in another.
+
+This way is using sem_open with a semaphore that does not exist, but will eventually if the signal sender decides to sem_open with O_CREAT. The logic is that you can sem_open WITHOUT O_CREAT to try and open a sem that does not exist. You can look at the return of this sem_open, if it is SEM_FAILED and errno is ENOENT, the signal sender still hasn't sent the signal.
+
+Then, the sender (e.g supervisor) just calls sem_open with O_CREAT to send the signal. The receiver (e.g philo)'s next sem_open will succeed, therefore signifying that the signal was sent and it's time to e.g stop.
+
+You could technically use this method to send any data of any kind since it is possible to create a binary communication channel out of semaphores.
+
+The caveat with this method is that you have to make sure the sem CAN be created before running your routine, because if it already exists, the entire plan is ruined.
+
+Another caveat is that if a malicious third party wanted to ruin your plans, they could launch their own program that creates the sem you're using for communication with enough permissions that you'll be able to open it, or not enough so that you never will, but one way or the other, this ruins your program without you being able to really safeguard against it. It's one possible vulnerability, but this is nitpicking for a school project and at least we're aware of it.
+
+
+Now just gotta decide which method to go for.
+No threads is simpler, but I've already started writing some threads logic and/or structures.
+
+
+
+
+
+
+
+
 
 
 
