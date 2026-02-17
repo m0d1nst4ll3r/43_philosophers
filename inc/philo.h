@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 10:27:57 by rapohlen         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -29,37 +17,87 @@
 # include <errno.h>		// errno
 # include <string.h>	// strerror
 
-typedef struct s_philo_mutex
-{
-	pthread_mutex_t	lfork;
-	pthread_mutex_t	*rfork;
-	pthread_mutex_t	*print;
-	pthread_mutex_t	*is_end_of_sim;
-	pthread_mutex_t	*stuffed_philos;
-	pthread_mutex_t	death_time;
-}	t_philo_mutex;
 
-typedef struct s_philo_time
+//	Semaphore philosophers
+//
+// Main thread
+// 1. 
+// 2.
+// 3.
+// 4.
+// 5. fork() in a while
+// 6. Create 2 threads to help supervise
+// 6. sem_wait() for ready_sem
+// 7. sem_post() for start_sem in a while
+// 8. Supervise sim
+//		- In a while(1), just check for dead_philo and stuffed_philos bools
+// 9. End sim
+//		- Post global stop sem
+//		- waitpid() in a while
+//
+//	Supervisor help thread #1
+// Monitors for global death sem that signals a philo has died.
+// Any philo died = stop;
+//
+//	Supervisor help thread #2
+// Monitors for global stuffed sem that signals philos are stuffed.
+// All philos stuffed = stop.
+//
+// Philo thread
+//
+//
+typedef struct s_philo_stop_monitor
 {
-	unsigned int	to_die;
-	unsigned int	to_eat;
-	unsigned int	to_sleep;
-	unsigned int	meals_to_end;
-	unsigned int	meals_eaten;
-	unsigned int	*stuffed_philos;
-	const bool		*is_end_of_sim;
-	struct timeval	current;
-	struct timeval	death;
-	struct timeval	start;
-}	t_philo_time;
+	sem_t	*global_stop_sem;
+	sem_t	*local_stop_var_sem;
+	bool	*local_stop;
+}	t_philo_stop_monitor;
 
-typedef struct s_philo
+typedef struct s_supervisor_death_monitor
 {
-	int				id;
-	pthread_t		thread;
-	t_philo_mutex	mutex;
-	t_philo_time	time;
-}	t_philo;
+	sem_t	*local_death_var_sem;
+	sem_t	*global_death_sem;
+	bool	*is_philo_dead;
+}	t_supervisor_death_monitor;
+
+typedef struct s_supervisor_stuffed_monitor
+{
+	sem_t	*local_stuffed_var_sem;
+	sem_t	*global_stuffed_sem;
+	bool	*are_philos_stuffed;
+	int		num_philos;
+}	t_supervisor_stuffed_monitor;
+
+// ========================== SEMAPHORES ==========================
+typedef struct s_sem_supervisor
+{
+	sem_t	*dead_var;
+	sem_t	*stuffed_var;
+}	t_sem_supervisor;
+
+typedef struct s_sem_philo
+{
+	sem_t	*stop_var;
+}	t_sem_philo;
+
+// May add add critical_error sem
+typedef struct s_sem_global
+{
+	sem_t	*forks;
+	sem_t	*print;
+	sem_t	*ready;
+	sem_t	*start;
+	sem_t	*stop;
+	sem_t	*dead;
+	sem_t	*stuffed;
+}	t_sem_global;
+
+typedef struct s_sem;
+{
+	t_sem_global		global;
+	t_sem_philo			philo;
+	t_sem_supervisor	supervisor;
+}	t_sem;
 
 typedef struct s_time
 {
@@ -67,25 +105,35 @@ typedef struct s_time
 	unsigned int	to_eat;
 	unsigned int	to_sleep;
 	unsigned int	meals_to_end;
-	unsigned int	stuffed_philos;
 	struct timeval	start;
 	struct timeval	current;
-	bool			is_end_of_sim;
 }	t_time;
 
-typedef struct s_mutex
+typedef struct s_thread_philo
 {
-	pthread_mutex_t	print;
-	pthread_mutex_t	is_end_of_sim;
-	pthread_mutex_t	stuffed_philos;
-}	t_mutex;
+	pthread_t	stop_monitor;
+}	t_thread_philo;
+
+typedef struct s_thread_supervisor
+{
+	pthread_t	death_monitor;
+	pthread_t	stuffed_monitor;
+}	t_thread_supervisor;
+
+typedef struct s_thread
+{
+	t_thread_supervisor	supervisor;
+	t_thread_philo		philo;
+}	t_thread;
 
 typedef struct s_prog
 {
 	unsigned int	num_philos;
-	t_philo			*philos;
+	int				philo_id;
 	t_time			time;
-	t_mutex			mutex;
+	t_sem			sem;
+	t_philo			philo;
+	t_thread		thread;
 }	t_prog;
 
 // init_exit.c

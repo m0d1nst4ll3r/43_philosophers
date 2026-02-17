@@ -140,9 +140,9 @@ Semaphores:
 	- stop var sem
 
 Note that I haven't accounted for the "starting shot". In base program I use the print mutex, but for semaphores, you can't do that. You need to post as many times as there are philos, can't just pots once (or only one philo will start). Thus, we might need a start semaphore as well (not 100% sure).
+Note I also didn't account for thread starting BEFORE the starting shot. I need a ready_sem for the supervisor to know that all philos are ready and the sim can start. Because philos need some time to build their own sems.
 
-
-
+Can have one extra semaphore/supervisor thread for fatal errors, so supervisor can know to print an error and order everything to close and leave.
 
 
 
