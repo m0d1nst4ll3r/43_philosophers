@@ -69,4 +69,22 @@ To avoid vulnerability problems (or make it a bit harder at least) I can create 
 
 
 
+18/02/2026
 
+Update:
+
+Code almost written. Supervisor logic and philo logic to be written.
+Philo needs gettime + routine
+
+Supervisor needs routine (very little to write)
+
+The way I'm writing the program is no good, though, for now.
+Basically supervisor has no way of knowing which philo died.
+Also, philos have no way of telling the supervisor when they are scheduled to die (like the way I did it in the base program).
+So the only way to do it the way I'm currently doing it is for philosophers themselves to realize that they will die during a usleep, stop themselves in advance, usleep of the difference, and print their own death message.
+But this is way less elegant than the way I did it the first time.
+Thus, I need to find a better way if there is one...
+But how can philos, which are in an entirely different process, tell their time to death to the main process? They don't share any memory and there are no signals.
+
+
+One added thing: in case of critical error (e.g I can't post stop) I can kill all the philo pids. Need to add this.

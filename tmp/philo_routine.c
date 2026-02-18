@@ -1,40 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft.c                                            :+:      :+:    :+:   */
+/*   philo_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 15:42:38 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 15:43:08 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/18 20:16:15 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	supervisor_routine(t_prog *d)
+static void	wait_start(t_prog *d)
 {
-	t_supervisor	supervisor;
-
-	init_supervisor(&supervisor, d);
-	launch_start();
-	supervisor_loop();
-	cleanup_supervisor();
+	while (1)
+	{
+		if (sem_exists(d->sem.start.name)
+			|| sem_exists(d->sem.stop.name))
+			break ;
+	}
 }
 
-void	do_forks(t_prog *d)
+static void	update_start_time(t_prog *d)
 {
+	//...
 }
 
-char	*get_stuffed_name(int id)
+static void	philo_loop(t_prog *d)
 {
-	char	*id_str;
-	char	*name;
-
-	id_str = ft_itoa(id);
-	if (!id_str)
-		return (NULL);
-	name = ft_strjoin(SEM_NAME_STUFFED, id_str);
-	free(id_str);
-	return (name);
+	//...
 }
+
+void	philo_routine(t_prog *d)
+{
+	wait_start(d);
+	update_start_time(d);
+	philo_loop(d);
+}
+

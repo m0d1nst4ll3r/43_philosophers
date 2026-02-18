@@ -1,40 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft.c                                            :+:      :+:    :+:   */
+/*   init_malloc.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 15:42:38 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 15:43:08 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 17:42:37 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/18 20:02:42 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	supervisor_routine(t_prog *d)
+void	init_malloc(t_prog *d)
 {
-	t_supervisor	supervisor;
-
-	init_supervisor(&supervisor, d);
-	launch_start();
-	supervisor_loop();
-	cleanup_supervisor();
-}
-
-void	do_forks(t_prog *d)
-{
-}
-
-char	*get_stuffed_name(int id)
-{
-	char	*id_str;
-	char	*name;
-
-	id_str = ft_itoa(id);
-	if (!id_str)
-		return (NULL);
-	name = ft_strjoin(SEM_NAME_STUFFED, id_str);
-	free(id_str);
-	return (name);
+	d->philo_pids = malloc(sizeof(*d->philo_pids) * d->rules.num_philos);
+	d->sem.stuffed = malloc(sizeof(*d->sem.stuffed) * d->rules.num_philos);
+	if (!d->children_pids || !d->sem.stuffed)
+		error_out(d, EMALLOC);
+	memset(d->philo_pids, 0, sizeof(*d->philo_pids) * d->rules.num_philos);
+	memset(d->sem.stuffed, 0, sizeof(*d->sem.stuffed) * d->rules.num_philos);
 }

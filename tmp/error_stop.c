@@ -1,40 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft.c                                            :+:      :+:    :+:   */
+/*   error_stop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 15:42:38 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 15:43:08 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 19:17:45 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/18 19:18:27 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	supervisor_routine(t_prog *d)
+void	error_stop(t_prog *d, char *err_str)
 {
-	t_supervisor	supervisor;
-
-	init_supervisor(&supervisor, d);
-	launch_start();
-	supervisor_loop();
-	cleanup_supervisor();
-}
-
-void	do_forks(t_prog *d)
-{
-}
-
-char	*get_stuffed_name(int id)
-{
-	char	*id_str;
-	char	*name;
-
-	id_str = ft_itoa(id);
-	if (!id_str)
-		return (NULL);
-	name = ft_strjoin(SEM_NAME_STUFFED, id_str);
-	free(id_str);
-	return (name);
+	d->sem.stop.ref = create_sem(d->sem.stop.name, 0);
+	if (d->sem.stop.ref == SEM_FAILED)
+		error_out(d, ESTOP);
+	error_out(d, err_str);
 }

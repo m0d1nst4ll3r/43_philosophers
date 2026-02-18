@@ -1,40 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft.c                                            :+:      :+:    :+:   */
+/*   init_sem_refs.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 15:42:38 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 15:43:08 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 17:45:45 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/18 18:02:02 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	supervisor_routine(t_prog *d)
+void	init_sem_refs(t_prog *d)
 {
-	t_supervisor	supervisor;
-
-	init_supervisor(&supervisor, d);
-	launch_start();
-	supervisor_loop();
-	cleanup_supervisor();
+	d->sem.forks.ref = create_sem(d->sem.forks.name, d->rules.num_philos);
+	d->sem.print.ref = create_sem(d->sem.print.name, 1);
+	if (d->sem.forks.ref == SEM_FAILED || d->sem.print.ref == SEM_FAILED)
+		error_out(d, ESEM);
 }
 
-void	do_forks(t_prog *d)
-{
-}
-
-char	*get_stuffed_name(int id)
-{
-	char	*id_str;
-	char	*name;
-
-	id_str = ft_itoa(id);
-	if (!id_str)
-		return (NULL);
-	name = ft_strjoin(SEM_NAME_STUFFED, id_str);
-	free(id_str);
-	return (name);
-}

@@ -1,40 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft.c                                            :+:      :+:    :+:   */
+/*   do_forks.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 15:42:38 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 15:43:08 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 18:35:27 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/18 19:18:27 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	supervisor_routine(t_prog *d)
-{
-	t_supervisor	supervisor;
-
-	init_supervisor(&supervisor, d);
-	launch_start();
-	supervisor_loop();
-	cleanup_supervisor();
-}
-
 void	do_forks(t_prog *d)
 {
-}
-
-char	*get_stuffed_name(int id)
-{
-	char	*id_str;
-	char	*name;
-
-	id_str = ft_itoa(id);
-	if (!id_str)
-		return (NULL);
-	name = ft_strjoin(SEM_NAME_STUFFED, id_str);
-	free(id_str);
-	return (name);
+	while (d->philo_id < d->rules.num_philos)
+	{
+		d->philo_pids[i] = fork();
+		if (d->philo_pids[i] == -1)
+			error_stop(d, EFORK);
+		else if (!d->philo_pids[i])
+		{
+			d->is_parent = false;
+			break ;
+		}
+		d->philo_id++;
+	}
+	if (!is_parent)
+		philo_routine(d);
+	else
+		supervisor_routine(d);
 }

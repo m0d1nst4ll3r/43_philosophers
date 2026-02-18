@@ -4,24 +4,21 @@
 # define SUPERVISOR_USLEEP	2000 // Limits how often supervisor checks on philos
 
 # define EDEFAULT	"Unknown error"
-# define EMALLOC	"Malloc error"
-# define EARGS		"Arguments have to be unsigned integers"
-# define EPHILNUM	"Need at least 1 philosopher"
-# define ESEM		"Error creating semaphore"
-# define ESEMAVAIL	"Some semaphores already exist with no permissions"
+# define EMALLOC	"Malloc failure"
+# define ESEM		"Failed creating semaphore"
+# define ESEMAVAIL	"A semaphore name is already in use by another process"
+# define EFORK		"Fork failure"
+# define ESTOP		"Critical: could not create stop sem, possibly after failed \
+fork or other critical error"
 
-# define PHILO_ERR_MALLOC	"Malloc failure, aborting all processes\n"
-# define PHILO_ERR_SEM		"Sem creation failure, aborting all processes\n"
-
-# define SEM_NAME_FORKS		"philo_sem_forks"
-# define SEM_NAME_PRINT		"philo_sem_print"
-
-# define SEM_NAME_START		"philo_sem_start"
-# define SEM_NAME_DEAD		"philo_sem_dead"
-# define SEM_NAME_STOP		"philo_sem_stop"
-# define SEM_NAME_ERROR		"philo_sem_error"
-
-# define SEM_NAME_STUFFED	"philo_sem_stuffed_"
+# define SEM_NAME_PREFIX			"philo_sem_"
+# define SEM_NAME_SUFFIX_FORKS		"_forks"
+# define SEM_NAME_SUFFIX_PRINT		"_print"
+# define SEM_NAME_SUFFIX_START		"_start"
+# define SEM_NAME_SUFFIX_DEATH		"_death"
+# define SEM_NAME_SUFFIX_STOP		"_stop"
+# define SEM_NAME_SUFFIX_ERROR		"_error"
+# define SEM_NAME_SUFFIX_STUFFED	"_stuffed"
 
 // TODO Remove libft eventually and bake functions into program
 # include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
@@ -35,14 +32,37 @@
 // ================================ SEMAPHORES =================================
 typedef struct s_sem
 {
-	sem_t	*forks;
-	sem_t	*print;
-	char	**stuffed;
+	sem_t	*ref;
+	char	*name;
 }	t_sem;
+
+typedef struct s_sem_stuffed
+{
+	sem_t	*ref;
+	char	*name;
+	bool	is_stuffed;
+}	t_sem_stuffed;
+
+//	These semaphores are used in a normal way:
+// forks, print
+//	These semaphores are used as signals:
+// start, death, stop, error, stuffed[]
+//	They are kept uncreated until signal needs to be sent.
+typedef struct s_sem_list
+{
+	t_sem	*forks;
+	t_sem	*print;
+	t_sem	*start;
+	t_sem	*death;
+	t_sem	*stop;
+	t_sem	*error;
+	t_sem	**stuffed;
+}	t_sem_list;
 
 // =================================== RULES ===================================
 typedef struct s_rules
 {
+	unsigned int	num_philos;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
@@ -59,35 +79,28 @@ typedef struct s_time
 // ================================ MAIN STRUCT ================================
 typedef struct s_prog
 {
-	unsigned int	num_philos;
+	bool			is_parent;
 	int				philo_id;
-	pid_t			*children_pids;
+	pid_t			*philo_pids;
 	t_rules			rules;
 	t_time			time;
 	t_sem			sem;
 }	t_prog;
 
-// init_exit.c
-void	init_prog(t_prog *d);
-void	exit_prog(t_prog *d, int exitval);
-void	print_usage(void);
-void	error_out(t_prog *d, char *err_str);
+// init.c
 
-// parse_args.c
-void	parse_args(t_prog *d, char **av);
+// error.c
 
-// prepare_sim.c
-void	prepare_sim(t_prog *d);
-// end_sim.c
-void	end_sim(t_prog *d);
+// exit.c
 
 // philo.c
-bool	p_think(t_philo *d);
-bool	p_eat(t_philo *d);
-bool	p_sleep(t_philo *d);
-void	*philo_thread(void *p);
 
-// supervise_sim.c
-void	supervise_sim(t_prog *d);
+// supervisor.c
+
+// fork.c
+
+// args.c
+
+
 
 #endif

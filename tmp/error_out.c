@@ -1,40 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft.c                                            :+:      :+:    :+:   */
+/*   error_out.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 15:42:38 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 15:43:08 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 16:53:31 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/18 18:06:20 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	supervisor_routine(t_prog *d)
+static void	exit_prog(t_prog *d, unsigned char exitval)
 {
-	t_supervisor	supervisor;
-
-	init_supervisor(&supervisor, d);
-	launch_start();
-	supervisor_loop();
-	cleanup_supervisor();
+	cleanup_data(d);
+	exit(exitval);
 }
 
-void	do_forks(t_prog *d)
+void	error_out(t_prog *d)
 {
-}
-
-char	*get_stuffed_name(int id)
-{
-	char	*id_str;
-	char	*name;
-
-	id_str = ft_itoa(id);
-	if (!id_str)
-		return (NULL);
-	name = ft_strjoin(SEM_NAME_STUFFED, id_str);
-	free(id_str);
-	return (name);
+	if (!err_str)
+		err_str = EDEFAULT;
+	dprintf(2, "philo: %s", err_str);
+	if (errno)
+		dprintf(2, ": %s", strerror(errno));
+	dprintf(2, "\n");
+	exit_prog(d, 1);
 }
