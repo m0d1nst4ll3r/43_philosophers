@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 17:36:31 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 18:38:08 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,14 @@
 
 # define EDEFAULT	"Unknown error"
 # define EMALLOC	"Malloc error"
-# define EARGS		"Arguments have to be unsigned integers"
-# define EPHILNUM	"Need at least 1 philosopher"
 
 // TODO Remove libft eventually and bake functions into program
 # include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
 # include <pthread.h>	// pthread
 # include <sys/time.h>	// gettimeofday
 # include <stdbool.h>	// bool
-# include <stdio.h>
+# include <string.h>	// memset
+# include <stdio.h>		// printf
 
 typedef struct s_philo_mutex
 {
@@ -90,13 +89,11 @@ typedef struct s_prog
 void	print_message(int time, int id, char *str);
 
 // init_exit.c
-void	init_prog(t_prog *d);
 void	exit_prog(t_prog *d, int exitval);
-void	print_usage(void);
 void	error_out(t_prog *d, char *err_str);
 
 // parse_args.c
-void	parse_args(t_prog *d, char **av);
+bool	init_args(t_prog *d, char **av);
 
 // prepare_sim.c
 void	prepare_sim(t_prog *d);

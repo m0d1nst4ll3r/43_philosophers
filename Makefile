@@ -6,13 +6,13 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/02/19 17:18:18 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/19 18:38:19 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Source files
 CFILES		= main.c \
-			  parse_args.c \
+			  init_args.c \
 			  init_exit.c \
 			  prepare_sim.c \
 			  supervise_sim.c \

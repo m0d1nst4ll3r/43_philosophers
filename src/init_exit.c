@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:06:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 17:21:33 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 18:36:51 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,23 +27,11 @@ static void	destroy_mutexes(t_prog *d)
 	pthread_mutex_destroy(&d->mutex.stuffed_philos);
 }
 
-void	init_prog(t_prog *d)
-{
-	d->philos = NULL;
-}
-
 void	exit_prog(t_prog *d, int exitval)
 {
 	destroy_mutexes(d);
 	ft_free((void *)&d->philos);
 	exit(exitval);
-}
-
-void	print_usage(void)
-{
-	printf("./philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
- [number_of_times_each_philosopher_must_eat]\n");
-	exit(0);
 }
 
 void	error_out(t_prog *d, char *err_str)
