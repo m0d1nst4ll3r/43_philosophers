@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 21:58:42 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 06:25:40 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 15:36:39 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ static void	init_philos(t_prog *d)
 		else
 			d->philos[i].mutex.rfork = &d->philos[i - 1].mutex.lfork;
 		d->philos[i].mutex.stuffed_philos = &d->mutex.stuffed_philos;
-		d->philos[i].mutex.is_end_of_sim = &d->mutex.is_end_of_sim;
 		d->philos[i].mutex.print = &d->mutex.print;
 		d->philos[i].time.to_die = d->time.to_die;
 		d->philos[i].time.to_eat = d->time.to_eat;
@@ -51,7 +50,6 @@ static void	create_mutexes(t_prog *d)
 		i++;
 	}
 	pthread_mutex_init(&d->mutex.print, NULL);
-	pthread_mutex_init(&d->mutex.is_end_of_sim, NULL);
 	pthread_mutex_init(&d->mutex.stuffed_philos, NULL);
 }
 

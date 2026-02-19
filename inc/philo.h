@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 10:27:57 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 17:20:21 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # define SUPERVISOR_USLEEP	2000 // Limits how often supervisor checks on philos
 
+# define BSIZE		31 // For custom printing
+
 # define EDEFAULT	"Unknown error"
 # define EMALLOC	"Malloc error"
 # define EARGS		"Arguments have to be unsigned integers"
@@ -22,19 +24,16 @@
 
 // TODO Remove libft eventually and bake functions into program
 # include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
-# include <stdio.h>		// printf
 # include <pthread.h>	// pthread
 # include <sys/time.h>	// gettimeofday
 # include <stdbool.h>	// bool
-# include <errno.h>		// errno
-# include <string.h>	// strerror
+# include <stdio.h>
 
 typedef struct s_philo_mutex
 {
 	pthread_mutex_t	lfork;
 	pthread_mutex_t	*rfork;
 	pthread_mutex_t	*print;
-	pthread_mutex_t	*is_end_of_sim;
 	pthread_mutex_t	*stuffed_philos;
 	pthread_mutex_t	death_time;
 }	t_philo_mutex;
@@ -76,7 +75,6 @@ typedef struct s_time
 typedef struct s_mutex
 {
 	pthread_mutex_t	print;
-	pthread_mutex_t	is_end_of_sim;
 	pthread_mutex_t	stuffed_philos;
 }	t_mutex;
 
@@ -87,6 +85,9 @@ typedef struct s_prog
 	t_time			time;
 	t_mutex			mutex;
 }	t_prog;
+
+// print_message.c
+void	print_message(int time, int id, char *str);
 
 // init_exit.c
 void	init_prog(t_prog *d);

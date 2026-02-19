@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/02/16 07:10:06 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/19 17:18:18 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,7 @@ LIBFT_REPO	= https://github.com/m0d1nst4ll3r/43_mylibft
 
 # Compiler settings
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -MMD -MP -O3 $(addprefix -I,$(INCDIR))
+CFLAGS		= -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
 MAKEFLAGS	+= --no-print-directory

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:06:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 03:31:19 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 17:21:33 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ static void	destroy_mutexes(t_prog *d)
 		i++;
 	}
 	pthread_mutex_destroy(&d->mutex.print);
-	pthread_mutex_destroy(&d->mutex.is_end_of_sim);
 	pthread_mutex_destroy(&d->mutex.stuffed_philos);
 }
 
@@ -51,9 +50,8 @@ void	error_out(t_prog *d, char *err_str)
 {
 	if (!err_str)
 		err_str = EDEFAULT;
-	dprintf(2, "philo: %s", err_str);
-	if (errno)
-		dprintf(2, ": %s", strerror(errno));
-	dprintf(2, "\n");
+	write(2, "philo: ", 7);
+	write(2, err_str, sizeof(err_str) - 1);
+	write(2, "\n", 1);
 	exit_prog(d, 1);
 }
