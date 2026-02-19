@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 01:59:16 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 18:57:55 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 19:05:49 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ static bool	check_deaths(t_prog *d)
 			pthread_mutex_lock(&d->mutex.print);
 			d->time.is_end_of_sim = true;
 			gettimeofday(&d->time.current, NULL);
-			printf("%d %d died\n", ft_time_sub(d->time.current, d->time.start) / 1000, i + 1);
+			printf("%d %d died\n",
+				ft_time_sub(d->time.current, d->time.start) / 1000, i + 1);
 			pthread_mutex_unlock(&d->mutex.print);
 			return (true);
 		}

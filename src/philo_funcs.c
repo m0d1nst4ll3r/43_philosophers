@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:43:04 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 19:03:53 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 19:05:35 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ bool	p_think(t_philo *d)
 	}
 	gettimeofday(&d->time.current, NULL);
 	printf("%d %d is thinking\n",
-			ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
+		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
 	pthread_mutex_unlock(d->mutex.print);
 	if (!d->time.meals_eaten && d->id % 2)
 		usleep(d->time.to_eat * 1000);
@@ -55,7 +55,7 @@ bool	p_eat(t_philo *d)
 	d->time.death = ft_time_add(d->time.current, d->time.to_die * 1000);
 	pthread_mutex_unlock(&d->mutex.death_time);
 	printf("%d %d is eating\n",
-			ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
+		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
 	pthread_mutex_unlock(d->mutex.print);
 	usleep(d->time.to_eat * 1000);
 	pthread_mutex_unlock(&d->mutex.lfork);
@@ -75,7 +75,7 @@ bool	p_sleep(t_philo *d)
 	}
 	gettimeofday(&d->time.current, NULL);
 	printf("%d %d is sleeping\n",
-			ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
+		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
 	pthread_mutex_unlock(d->mutex.print);
 	usleep(d->time.to_sleep * 1000);
 	return (true);
