@@ -6,19 +6,26 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/02/16 07:10:06 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/19 20:37:14 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Source files
 CFILES		= main.c \
-			  parse_args.c \
-			  init_exit.c \
-			  prepare_sim.c \
-			  supervise_sim.c \
-			  end_sim.c \
+			  init_args.c \
+			  init_prog.c \
+			  init_malloc.c \
+			  init_sem_names.c \
+			  init_sem_refs.c \
+			  check_sems_avail.c \
+			  do_forks.c \
+			  philo_routine.c \
 			  philo_funcs.c \
-			  philo.c
+			  supervisor_routine.c \
+			  cleanup_prog.c \
+			  error_out.c \
+			  error_stop.c \
+			  util_sem.c
 SRCDIR		= src
 SRC			= $(addprefix $(SRCDIR)/, $(CFILES))
 

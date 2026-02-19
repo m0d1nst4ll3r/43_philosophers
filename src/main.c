@@ -5,35 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/14 15:41:01 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 03:21:39 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 15:38:55 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/19 19:06:49 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-//	Program flow:
-//
-// 1. Get args
-// 2. Prepare sim
-//	- Prepare philo structs (set addresses, values, etc)
-//	- Init mutexes
-//	- Init threads
-//	- Init time
-// 3. Supervise threads (threads have started now)
-//	- Check deaths
-//	- Check stuffed
-// 4. End sim (join threads)
+static void	print_usage(void)
+{
+	printf("./philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
+ [number_of_times_each_philosopher_must_eat]\n\
+Params should be unsigned integers <= 10000. Need at least 1 philosopher.\n");
+}
+
 int	main(int ac, char **av)
 {
 	t_prog	data;
 
-	if (ac != 5 && ac != 6)
+	memset(&data, 0, sizeof(data));
+	if ((ac != 5 && ac != 6) || !init_args(&data, av))
+	{
 		print_usage();
+		return (0);
+	}
 	init_prog(&data);
-	parse_args(&data, av);
-	prepare_sim(&data);
-	supervise_sim(&data);
-	end_sim(&data);
-	exit_prog(&data, 0);
+	init_malloc(&data);
+	init_sem_names(&data);
+	init_sem_refs(&data);
+	check_sems_avail(&data);
+	do_forks(&data);
+	cleanup_prog(&data);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 18:07:58 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 18:25:43 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 20:37:28 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,25 @@ static bool	is_sem_available(char *sem_name)
 	return (true);
 }
 
-void	check_sems_available(t_prog *d)
+static bool	are_stuffed_sems_available(t_prog *d)
 {
-	int	i;
+	unsigned int	i;
 
-	if (!is_sem_available(d->sem.start.name)
-		|| !is_sem_available(d->sem.death.name)
-		|| !is_sem_available(d->sem.stop.name)
-		|| !is_sem_available(d->sem.error.name))
-		error_out(d, ESEMAVAIL);
 	i = 0;
 	while (i < d->rules.num_philos)
 	{
 		if (!is_sem_available(d->sem.stuffed[i].name))
-			error_out(d, ESEMAVAIL);
+			return (false);
 		i++;
 	}
+	return (true);
+}
+
+void	check_sems_avail(t_prog *d)
+{
+	if (!is_sem_available(d->sem.start.name)
+		|| !is_sem_available(d->sem.death.name)
+		|| !is_sem_available(d->sem.stop.name)
+		|| !are_stuffed_sems_available(d))
+		error_out(d, ESEMAVAIL);
 }

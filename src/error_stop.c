@@ -1,32 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_prog.c                                        :+:      :+:    :+:   */
+/*   error_stop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 15:38:11 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 19:04:19 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 19:17:45 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/19 20:29:08 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	init_prog(t_prog *d)
+static void	kill_philos(t_prog *d)
 {
-	int	i;
+	unsigned int	i;
 
-	d->is_parent = true;
-	d->sem.forks.ref = SEM_FAILED;
-	d->sem.print.ref = SEM_FAILED;
-	d->sem.start.ref = SEM_FAILED;
-	d->sem.death.ref = SEM_FAILED;
-	d->sem.stop.ref = SEM_FAILED;
-	d->sem.error.ref = SEM_FAILED;
 	i = 0;
 	while (i < d->rules.num_philos)
 	{
-		d->sem.stuffed[i].ref = SEM_FAILED;
+		kill(d->philo_pids[i], SIGKILL);
 		i++;
 	}
+}
+
+// Fires if stop sem can't be created - have to force kill children for lack
+//	of any other way to tell them to stop
+static void	critical_stop(t_prog *d)
+{
+	kill_philos(d);
+	error_out(d, ESTOP);
+}
+
+void	error_stop(t_prog *d, char *err_str)
+{
+	d->sem.stop.ref = create_sem(d->sem.stop.name, 0);
+	if (d->sem.stop.ref == SEM_FAILED)
+		critical_stop(d);
+	error_out(d, err_str);
 }

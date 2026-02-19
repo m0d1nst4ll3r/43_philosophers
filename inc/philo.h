@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/19 20:38:52 by rapohlen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
-# define SUPERVISOR_USLEEP	2000 // Limits how often supervisor checks on philos
+# define SUPERVISOR_USLEEP	1000 // Limits how often supervisor checks on philos
 
 # define EDEFAULT	"Unknown error"
 # define EMALLOC	"Malloc failure"
@@ -23,11 +35,15 @@ fork or other critical error"
 // TODO Remove libft eventually and bake functions into program
 # include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
 # include <stdio.h>		// printf
-# include <pthread.h>	// pthread
-# include <sys/time.h>	// gettimeofday
 # include <stdbool.h>	// bool
 # include <errno.h>		// errno
 # include <string.h>	// strerror
+# include <sys/time.h>	// gettimeofday
+# include <sys/wait.h>	// waitpid
+# include <sys/types.h>	// kill
+# include <signal.h>	// kill
+# include <fcntl.h>		// O_* constants
+# include <semaphore.h>	// sem_open, sem_close, sem_unlink, sem_wait, sem_post
 
 // ================================ SEMAPHORES =================================
 typedef struct s_sem
@@ -50,13 +66,12 @@ typedef struct s_sem_stuffed
 //	They are kept uncreated until signal needs to be sent.
 typedef struct s_sem_list
 {
-	t_sem	*forks;
-	t_sem	*print;
-	t_sem	*start;
-	t_sem	*death;
-	t_sem	*stop;
-	t_sem	*error;
-	t_sem	**stuffed;
+	t_sem			forks;
+	t_sem			print;
+	t_sem			start;
+	t_sem			death;
+	t_sem			stop;
+	t_sem_stuffed	*stuffed;
 }	t_sem_list;
 
 // =================================== RULES ===================================
@@ -72,35 +87,48 @@ typedef struct s_rules
 // =================================== TIME ====================================
 typedef struct s_time
 {
+	unsigned int	meals_eaten;
 	struct timeval	start;
 	struct timeval	current;
+	struct timeval	death;
 }	t_time;
 
 // ================================ MAIN STRUCT ================================
 typedef struct s_prog
 {
 	bool			is_parent;
-	int				philo_id;
+	unsigned int	philo_id;
 	pid_t			*philo_pids;
 	t_rules			rules;
 	t_time			time;
-	t_sem			sem;
+	t_sem_list		sem;
 }	t_prog;
 
-// init.c
+// Called from main.c
+bool	init_args(t_prog *d, char **av);
+void	init_prog(t_prog *d);
+void	init_malloc(t_prog *d);
+void	init_sem_names(t_prog *d);
+void	init_sem_refs(t_prog *d);
+void	check_sems_avail(t_prog *d);
+void	do_forks(t_prog *d);
+void	cleanup_prog(t_prog *d);
 
-// error.c
+// Called from do_forks.c
+void	philo_routine(t_prog *d);
+void	supervisor_routine(t_prog *d);
 
-// exit.c
+// Called from philo_routine.c
+bool	p_think(t_prog *d);
+bool	p_eat(t_prog *d);
+bool	p_sleep(t_prog *d);
 
-// philo.c
+// Util
+bool	sem_exists(char *sem_name);
+sem_t	*create_sem(char *sem_name, int value);
 
-// supervisor.c
-
-// fork.c
-
-// args.c
-
-
+// Error
+void	error_out(t_prog *d, char *err_str);
+void	error_stop(t_prog *d, char *err_str);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 19:13:58 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 20:17:03 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 20:38:31 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@ static void	signal_stop(t_prog *d)
 {
 	d->sem.stop.ref = create_sem(d->sem.stop.name, 0);
 	if (d->sem.start.ref == SEM_FAILED)
-		error_out(d, ESTOP);
+		error_stop(d, ESTOP);
 }
 
-static int	count_stuffed(t_prog *d)
+static unsigned int	count_stuffed(t_prog *d)
 {
-	int	i;
-	int	stuffed_philos;
+	unsigned int	i;
+	unsigned int	stuffed_philos;
 
 	i = 0;
 	stuffed_philos = 0;
@@ -42,22 +42,14 @@ static int	count_stuffed(t_prog *d)
 			stuffed_philos++;
 		i++;
 	}
+	return (stuffed_philos);
 }
 
 static void	supervisor_loop(t_prog *d)
 {
-	while (1)
-	{
-		if (sem_exists(d->sem.death.name))
-		{
-			sem_wait(d->sem.print.ref);
-			printf("%d %d died\n");
-			sem_post(d->sem.print.ref);
-			break ;// Philo is dead: post stop and print death
-		}
-		if (count_stuffed(d) == d->rules.num_philos)
-			break ;
-	}
+	while (!sem_exists(d->sem.death.name)
+		&& count_stuffed(d) != d->rules.num_philos)
+		usleep(SUPERVISOR_USLEEP);
 	signal_stop(d);
 }
 

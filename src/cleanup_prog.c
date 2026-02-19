@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 18:05:11 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 19:08:49 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 20:28:41 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	cleanup_sem_refs(t_prog *d)
 {
-	int	i;
+	unsigned int	i;
 
 	if (d->sem.forks.ref != SEM_FAILED)
 		sem_close(d->sem.forks.ref);
@@ -26,9 +26,9 @@ static void	cleanup_sem_refs(t_prog *d)
 		sem_close(d->sem.death.ref);
 	if (d->sem.stop.ref != SEM_FAILED)
 		sem_close(d->sem.stop.ref);
-	if (d->sem.error.ref != SEM_FAILED)
-		sem_close(d->sem.error.ref);
-	i = 0
+	if (!d->sem.stuffed)
+		return ;
+	i = 0;
 	while (i < d->rules.num_philos)
 	{
 		if (d->sem.stuffed[i].ref != SEM_FAILED)
@@ -39,14 +39,15 @@ static void	cleanup_sem_refs(t_prog *d)
 
 static void	cleanup_sem_names(t_prog *d)
 {
-	int	i;
+	unsigned int	i;
 
 	free(d->sem.forks.name);
 	free(d->sem.print.name);
 	free(d->sem.start.name);
 	free(d->sem.death.name);
 	free(d->sem.stop.name);
-	free(d->sem.error.name);
+	if (!d->sem.stuffed)
+		return ;
 	i = 0;
 	while (i < d->rules.num_philos)
 	{
@@ -63,7 +64,7 @@ static void	cleanup_malloc(t_prog *d)
 
 static void	wait_pids(t_prog *d)
 {
-	int	i;
+	unsigned int	i;
 
 	i = 0;
 	while (i < d->rules.num_philos)
@@ -76,7 +77,7 @@ static void	wait_pids(t_prog *d)
 
 void	cleanup_prog(t_prog *d)
 {
-	if (d->is_parent)
+	if (d->is_parent && d->philo_pids)
 		wait_pids(d);
 	cleanup_sem_refs(d);
 	cleanup_sem_names(d);

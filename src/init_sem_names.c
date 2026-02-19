@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:40:51 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 17:41:20 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 20:36:24 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@ static char	*get_fingerprint_time(void)
 		return (NULL);
 	usec_str = ft_itoa(time.tv_usec);
 	if (!usec_str)
+	{
+		free(sec_str);
 		return (NULL);
+	}
 	fingerprint = ft_strjoin(sec_str, usec_str);
 	free(sec_str);
 	free(usec_str);
@@ -48,9 +51,9 @@ static char	*get_fingerprint(void)
 
 static bool	init_sem_stuffed_names(t_prog *d, char *fingerprint)
 {
-	int	i;
-	char	*fingerprint_stuffed;
-	char	*id_str;
+	unsigned int	i;
+	char			*fingerprint_stuffed;
+	char			*id_str;
 
 	fingerprint_stuffed = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_STUFFED);
 	if (!fingerprint_stuffed)
@@ -75,22 +78,22 @@ static bool	init_sem_stuffed_names(t_prog *d, char *fingerprint)
 	return (true);
 }
 
-// Using a short, unique fingerprint using gettimeofday to avoid collision
+// Use a short, unique fingerprint using gettimeofday to avoid collision
 void	init_sem_names(t_prog *d)
 {
-	int		i;
 	char	*fingerprint;
 
 	fingerprint = get_fingerprint();
 	if (!fingerprint)
 		error_out(d, EMALLOC);
 	d->sem.forks.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_FORKS);
-	d->sem.print.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_FORKS);
-	d->sem.start.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_FORKS);
-	d->sem.death.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_FORKS);
-	d->sem.stop.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_FORKS);
-	d->sem.error.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_FORKS);
-	if (!init_sem_stuffed_names())
+	d->sem.print.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_PRINT);
+	d->sem.start.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_START);
+	d->sem.death.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_DEATH);
+	d->sem.stop.name = ft_strjoin(fingerprint, SEM_NAME_SUFFIX_STOP);
+	if (!d->sem.forks.name || !d->sem.print.name || !d->sem.start.name
+		|| !d->sem.death.name || !d->sem.stop.name
+		|| !init_sem_stuffed_names(d, fingerprint))
 	{
 		free(fingerprint);
 		error_out(d, EMALLOC);

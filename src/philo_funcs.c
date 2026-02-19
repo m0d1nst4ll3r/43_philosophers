@@ -5,86 +5,111 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/16 02:43:04 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 10:27:47 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/19 18:41:14 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/19 20:39:05 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static bool	is_end_of_sim(t_philo *d)
+static bool	p_die(t_prog *d)
 {
-	bool	is_end_of_sim;
+	int	usec_until_death;
 
-	pthread_mutex_lock(d->mutex.is_end_of_sim);
-	is_end_of_sim = *d->time.is_end_of_sim;
-	pthread_mutex_unlock(d->mutex.is_end_of_sim);
-	return (is_end_of_sim);
+	gettimeofday(&d->time.current, NULL);
+	usec_until_death = ft_time_sub(d->time.death, d->time.current);
+	if (usec_until_death > 0)
+		usleep(usec_until_death);
+	sem_wait(d->sem.print.ref);
+	if (!sem_exists(d->sem.death.name))
+	{
+		d->sem.death.ref = create_sem(d->sem.death.name, 0);
+		if (d->sem.death.ref == SEM_FAILED)
+			error_stop(d, ESEM);
+		gettimeofday(&d->time.current, NULL);
+		printf("%d %d died\n",
+			ft_time_sub(d->time.current, d->time.start), d->philo_id + 1);
+		while (!sem_exists(d->sem.stop.name))
+			;
+	}
+	sem_post(d->sem.print.ref);
+	return (false);
 }
 
-bool	p_think(t_philo *d)
+static bool	p_usleep(t_prog *d, unsigned int usec)
 {
-	pthread_mutex_lock(d->mutex.print);
-	if (is_end_of_sim(d))
+	gettimeofday(&d->time.current, NULL);
+	if (ft_time_sub(d->time.death, ft_time_add(d->time.current, usec)) <= 0)
+		return (false);
+	usleep(usec);
+	return (true);
+}
+
+bool	p_think(t_prog *d)
+{
+	sem_wait(d->sem.print.ref);
+	if (sem_exists(d->sem.stop.name))
 	{
-		pthread_mutex_unlock(d->mutex.print);
+		sem_post(d->sem.print.ref);
 		return (false);
 	}
 	gettimeofday(&d->time.current, NULL);
 	printf("%d %d is thinking\n",
-		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
-	pthread_mutex_unlock(d->mutex.print);
-	if (!d->time.meals_eaten && d->id % 2)
-		usleep(d->time.to_eat * 1000);
+		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
+	sem_post(d->sem.print.ref);
+	if (!d->time.meals_eaten && d->philo_id % 2)
+	{
+		if (!p_usleep(d, d->rules.time_to_eat * 1000))
+			return (p_die(d));
+	}
 	return (true);
 }
 
-static void	increment_stuffed(t_philo *d)
+bool	p_eat(t_prog *d)
 {
-	pthread_mutex_lock(d->mutex.stuffed_philos);
-	(*d->time.stuffed_philos)++;
-	pthread_mutex_unlock(d->mutex.stuffed_philos);
-}
-
-bool	p_eat(t_philo *d)
-{
-	pthread_mutex_lock(&d->mutex.lfork);
-	pthread_mutex_lock(d->mutex.rfork);
-	pthread_mutex_lock(d->mutex.print);
-	if (is_end_of_sim(d))
+	if (d->rules.num_philos == 1)
+		return (p_die(d));
+	sem_wait(d->sem.forks.ref);
+	sem_wait(d->sem.forks.ref);
+	sem_wait(d->sem.print.ref);
+	if (sem_exists(d->sem.stop.name))
 	{
-		pthread_mutex_unlock(d->mutex.print);
-		pthread_mutex_unlock(&d->mutex.lfork);
-		pthread_mutex_unlock(d->mutex.rfork);
+		sem_post(d->sem.forks.ref);
+		sem_post(d->sem.forks.ref);
+		sem_post(d->sem.print.ref);
 		return (false);
 	}
 	gettimeofday(&d->time.current, NULL);
-	pthread_mutex_lock(&d->mutex.death_time);
-	d->time.death = ft_time_add(d->time.current, d->time.to_die * 1000);
-	pthread_mutex_unlock(&d->mutex.death_time);
+	d->time.death = ft_time_add(d->time.current, d->rules.time_to_die);
 	printf("%d %d is eating\n",
-		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
-	pthread_mutex_unlock(d->mutex.print);
-	usleep(d->time.to_eat * 1000);
-	pthread_mutex_unlock(&d->mutex.lfork);
-	pthread_mutex_unlock(d->mutex.rfork);
-	if (++d->time.meals_eaten == d->time.meals_to_end)
-		increment_stuffed(d);
+		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
+	if (!p_usleep(d, d->rules.time_to_eat * 1000))
+		return (p_die(d));
+	sem_post(d->sem.print.ref);
+	sem_post(d->sem.forks.ref);
+	sem_post(d->sem.forks.ref);
+	if (++d->time.meals_eaten == d->rules.meals_to_end)
+	{
+		d->sem.stuffed[d->philo_id].ref = create_sem(d->sem.stuffed[d->philo_id].name, 0);
+		if (d->sem.stuffed[d->philo_id].ref == SEM_FAILED)
+			error_stop(d, ESEM);
+	}
 	return (true);
 }
 
-bool	p_sleep(t_philo *d)
+bool	p_sleep(t_prog *d)
 {
-	pthread_mutex_lock(d->mutex.print);
-	if (is_end_of_sim(d))
+	sem_wait(d->sem.print.ref);
+	if (sem_exists(d->sem.stop.name))
 	{
-		pthread_mutex_unlock(d->mutex.print);
+		sem_post(d->sem.print.ref);
 		return (false);
 	}
 	gettimeofday(&d->time.current, NULL);
 	printf("%d %d is sleeping\n",
-		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
-	pthread_mutex_unlock(d->mutex.print);
-	usleep(d->time.to_sleep * 1000);
+		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
+	if (!p_usleep(d, d->rules.time_to_sleep * 1000))
+		return (p_die(d));
+	sem_post(d->sem.print.ref);
 	return (true);
 }
