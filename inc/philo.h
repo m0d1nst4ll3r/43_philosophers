@@ -6,14 +6,14 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 17:20:21 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 17:36:31 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
-# define SUPERVISOR_USLEEP	2000 // Limits how often supervisor checks on philos
+# define SUPERVISOR_USLEEP	1000 // Limits how often supervisor checks on philos
 
 # define BSIZE		31 // For custom printing
 
