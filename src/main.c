@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:41:01 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 18:36:51 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 18:56:24 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	print_usage(void)
 {
 	printf("./philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
  [number_of_times_each_philosopher_must_eat]\n\
-Params should be unsigned integers. Need at least 1 philosopher.\n");
+Params should be unsigned integers <= 10000. Need at least 1 philosopher.\n");
 }
 
 int	main(int ac, char **av)

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:43:04 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 17:18:50 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/19 19:03:53 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ static void	increment_stuffed(t_philo *d)
 
 bool	p_eat(t_philo *d)
 {
+	if (&d->mutex.lfork == d->mutex.rfork)
+		return (false);
 	pthread_mutex_lock(&d->mutex.lfork);
 	pthread_mutex_lock(d->mutex.rfork);
 	pthread_mutex_lock(d->mutex.print);
