@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/20 20:11:43 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/20 20:28:09 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ typedef struct s_threads
 typedef struct s_prog
 {
 	bool			is_parent;
+	bool			stop;
 	unsigned int	philo_id;
 	pid_t			*philo_pids;
 	t_rules			rules;
