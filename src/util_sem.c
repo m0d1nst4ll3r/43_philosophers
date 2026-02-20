@@ -6,15 +6,16 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:39:40 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/18 18:53:27 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/20 15:28:50 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// Create a semaphore and unlink it right after
 // If the semaphore already exists, unlink it
 // Return semaphore reference or SEM_FAILED on error (check errno!)
+// Does not unlink, so other processes can test for existence
+// These are unlinked during cleanup by the parent
 sem_t	*create_sem(char *sem_name, int value)
 {
 	sem_t	*new_sem;
@@ -23,7 +24,6 @@ sem_t	*create_sem(char *sem_name, int value)
 	new_sem = sem_open(sem_name, O_CREAT | O_EXCL, 0600, value);
 	if (new_sem == SEM_FAILED)
 		return (new_sem);
-	sem_unlink(sem_name);
 	return (new_sem);
 }
 

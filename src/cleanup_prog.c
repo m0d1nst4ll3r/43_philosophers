@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 18:05:11 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 20:28:41 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/20 14:51:30 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,6 @@ static void	cleanup_sem_names(t_prog *d)
 	}
 }
 
-static void	cleanup_malloc(t_prog *d)
-{
-	free(d->philo_pids);
-	free(d->sem.stuffed);
-}
-
 static void	wait_pids(t_prog *d)
 {
 	unsigned int	i;
@@ -75,11 +69,40 @@ static void	wait_pids(t_prog *d)
 	}
 }
 
+static void	cleanup_sem_links(t_prog *d)
+{
+	unsigned int	i;
+
+	if (sem_exists(d->sem.forks.name))
+		sem_unlink(d->sem.forks.name);
+	if (sem_exists(d->sem.print.name))
+		sem_unlink(d->sem.print.name);
+	if (sem_exists(d->sem.start.name))
+		sem_unlink(d->sem.start.name);
+	if (sem_exists(d->sem.death.name))
+		sem_unlink(d->sem.death.name);
+	if (sem_exists(d->sem.stop.name))
+		sem_unlink(d->sem.stop.name);
+	i = 0;
+	while (i < d->rules.num_philos)
+	{
+		if (sem_exists(d->sem.stuffed[i].name))
+			sem_unlink(d->sem.stuffed[i].name);
+		i++;
+	}
+}
+
+// free() lines should be cleanup_malloc()
+// But the nOrM doesn't allow 6 funcs, derrrr
 void	cleanup_prog(t_prog *d)
 {
 	if (d->is_parent && d->philo_pids)
+	{
 		wait_pids(d);
+		cleanup_sem_links(d);
+	}
 	cleanup_sem_refs(d);
 	cleanup_sem_names(d);
-	cleanup_malloc(d);
+	free(d->philo_pids);
+	free(d->sem.stuffed);
 }

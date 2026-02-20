@@ -88,3 +88,105 @@ But how can philos, which are in an entirely different process, tell their time 
 
 
 One added thing: in case of critical error (e.g I can't post stop) I can kill all the philo pids. Need to add this.
+
+
+20/02/2026
+
+
+Small problem here. Philos anticipate their own death. That's fine. Except it's not if they die while waiting on a fork, because then they can't check for their own death.
+
+Philos handling their death themselves is just pretty stupid and doesn't really work.
+
+I have to COMPLETELY change the way my logic works, sadly.
+
+The SUPERVISOR has to handle philo deaths, not philo themselves.
+
+Philos just do their fucking thing, supervisor handles all the rest.
+
+Problem : Philos can't fucking tell the supervisor their time-of-death, unlike in base program.
+
+I only have fucking semaphores to carry information, it's just shit.
+
+There are 2 solutions to this:
+1. Philos have their own fucking mini supervisor supervising them and just them, in a separate thread. It will just check on their time of death and signal that they're dead if they are - maybe print death itself, why not. Big supervisor just sets a stop value, I guess (or not even, fuck it). This requires pthread, at long last.
+2. I stubbornly refuse ONCE AGAIN to use pthread if I can avoid it at all, and I go the other option... Philosophers tell the supervisor their time of death and that's it. But how? They just create and remove a semaphore over and over again whenever they eat, and the supervisor will look for it to know that a philo just ate and to update its time_of_death. So the supervisor can't usleep, he has to always be looping asap because any delay in it noticing the sem is a delay in the time_of_death update. Note that with this solution, we run into problems if the amount of philos is so great and time_to_eat/to_sleep are so short that the philo will try to create its "just ate" semaphore faster than the supervisor can acknowledge and clear it. In other words, this is a BAD solution.
+
+Hence, we need threads. There's just no way not to do this project without them.
+So I might as well just go for full threads and give up on the stupid sem_open business.
+
+This means recoding almost everything.
+
+
+
+
+New version with threads and without sem_open bullshit:
+- Parent needs to check
+	- Stuffed counter (that's one thread)
+	- Any death (that's another thread)
+- Philo logic is exactly the same as base program
+	- Except since parent cannot read time.death value, there has to be a mini supervisor
+	- Mini supervisor checks for death value (and that's all)
+	- Another supervisor needs to check for stop sem (sem_wait, so has to be a separate thread)
+
+
+One more thing, when it comes to who posts which sem...
+Either mini-supervisors only communicate with chief supervisor
+Or mini-supervisors take matters into their own hands by communicating with other supervisors and printing death
+
+In option #1
+- Mini will only post death sem (array), big supervisor needs as many threads just to wait on that sem (this is ridiculous, but theoretically possible)
+In option #2
+- Mini will post, in a loop, stop sem (num_philo + 1 times) so that parent + all philo children waiting on it know to stop
+- Mini will also announce its philo's death
+
+
+- Parent
+- Parent thread #1
+- Parent thread #2
+- Philo
+- Philo thread #1
+	- Check time_of_death in loop. Post death if philo died.
+	- Death sem has to be in an array to know which philo died
+- Philo thread #2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

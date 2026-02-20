@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 19:17:21 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/20 15:18:51 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	wait_start(t_prog *d)
 static void	update_start_time(t_prog *d)
 {
 	gettimeofday(&d->time.start, NULL);
-	d->time.death = ft_time_add(d->time.start, d->rules.time_to_die);
+	d->time.death = ft_time_add(d->time.start, d->rules.time_to_die * 1000);
 }
 
 static void	philo_loop(t_prog *d)
