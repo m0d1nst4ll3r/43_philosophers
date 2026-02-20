@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/20 14:52:40 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/20 20:11:43 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,33 +46,27 @@ fork or other critical error"
 # include <semaphore.h>	// sem_open, sem_close, sem_unlink, sem_wait, sem_post
 
 // ================================ SEMAPHORES =================================
+
+typedef struct s_sem_global
+{
+	sem_t	*forks;
+	sem_t	*print;
+	sem_t	*start;
+	sem_t	*stop;
+	sem_t	*stuffed;
+}	t_sem_global;
+
+typedef struct s_sem_philo
+{
+	sem_t	*stop_value;
+	sem_t	*death_value;
+}	t_sem_philo;
+
 typedef struct s_sem
 {
-	sem_t	*ref;
-	char	*name;
+	t_sem_philo		philo;
+	t_sem_global	global;
 }	t_sem;
-
-typedef struct s_sem_stuffed
-{
-	sem_t	*ref;
-	char	*name;
-	bool	is_stuffed;
-}	t_sem_stuffed;
-
-//	These semaphores are used in a normal way:
-// forks, print
-//	These semaphores are used as signals:
-// start, death, stop, error, stuffed[]
-//	They are kept uncreated until signal needs to be sent.
-typedef struct s_sem_list
-{
-	t_sem			forks;
-	t_sem			print;
-	t_sem			start;
-	t_sem			death;
-	t_sem			stop;
-	t_sem_stuffed	*stuffed;
-}	t_sem_list;
 
 // =================================== RULES ===================================
 typedef struct s_rules
@@ -93,6 +87,13 @@ typedef struct s_time
 	struct timeval	death;
 }	t_time;
 
+typedef struct s_threads
+{
+	pthread_t	parent_stuffed_supervisor;
+	pthread_t	philo_death_supervisor;
+	pthread_t	philo_stop_supervisor;
+}	t_threads;
+
 // ================================ MAIN STRUCT ================================
 typedef struct s_prog
 {
@@ -101,7 +102,8 @@ typedef struct s_prog
 	pid_t			*philo_pids;
 	t_rules			rules;
 	t_time			time;
-	t_sem_list		sem;
+	t_sem			sem;
+	t_threads		threads;
 }	t_prog;
 
 // Called from main.c

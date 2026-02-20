@@ -140,17 +140,134 @@ In option #2
 - Mini will also announce its philo's death
 
 
+BTW: Parent only needs 1 thread, parent itself waits for stop. Parent does not look for deaths (mini supervisors do this), only parent thread (#1) looks for stuffed condition (waits in a loop). The stuffed supervisor will simply set stop and exit.
+Due to the fact that the stuffed supervisor could be waiting forever, as part of the main thread's exit process, it will have to manually post all the stuffed sems and pthread_join.
+
+
 - Parent
+	- Looks for 
 - Parent thread #1
-- Parent thread #2
 - Philo
+	- Normal routine, does loop, locks print, forks, think eat sleep
+	- Updates time_of_death upon eating
+	- Looks at stop value on printing
+	- Works like basic philo
 - Philo thread #1
-	- Check time_of_death in loop. Post death if philo died.
-	- Death sem has to be in an array to know which philo died
+	- Check time_of_death in loop. If philo dies, lock print, print death, post stop (in loop, num+1 for parent).
 - Philo thread #2
+	- Check stop - there is no loop, this is just one sem_wait. If sem_wait
 
 
 
+
+
+Philo trinity
+
+Philo does its thing
+The moment death supervisor notices death
+-> Locks print mutex (so far, this is like base philo)
+	-> What it does after HAS to be different from base philo, because it doesn't set one stop value that everyone's looking at
+	-> Instead of setting one stop bool, it posts as many times as there are threads waiting on stop (num + 1, parent is also waiting)
+		-> This should signal all supervisors waiting on stop that they need to tell their philo to stop
+	-> The stop supervisors will be waiting on stop. They need to then set their stop variable (shared with the philo thread) to true, so that the philo knows to exit. After that, they should post a special sem that says "stop received" or "stop set" or whatever.
+	-> With this order of things, the death watcher thread is guaranteed that nothing can go wrong, to summarize:
+		- Watch death in a loop
+		- If death is detected, lock print sem
+		- Print the death
+		- Post stop in a loop
+		- Wait on stop received in a loop (signals everyone's set their stop bool correctly)
+		- Unlocks print sem
+	-> Philos waiting on print, first thing they do is check the bool, so they DO NOT print and cleanup+return
+However, one extra thing is that the death watcher threads (the others) are still doing their thing
+They need to exit cleanly, so they need to look at stop bool value as well
+But for that, they need to wait and post the print sem as well
+I don't have a solution to this. I mean it works, but the issue is that it will hurt performance.
+That, or we trick them into stopping another way. E.g the philo, before exiting, sets its time_of_death to 0
+
+Btw, there needs to be a time_of_death sem as well
+
+Don't need fingerprint bullshit.
+
+
+Program flow:
+
+0. Prepare (see preparations)
+1. Do forks
+2. Parent
+	2a. Create stuffed thread
+		This thread waits for each stuffed value. At the end, it posts stop. That's it, that's the whole thing.
+	2b. Wait for stop (this is main thread)
+		Just literally wait for stop. The end. After this is cleanup.
+
+3. Child
+	3a. Create death thread
+		This thread watches for death value.
+		- Look for death in a loop, if it finds a death, exit the loop and...
+		- Lock print
+		- Check stop value (could have been set by other thread), if stop, just unlock print and return
+		- If not stop, print death message
+		- Post stop sem in a loop
+		- Wait stop received in a loop
+		- Unlock print and return
+	3b. Create stop thread
+		This thread watches for the stop sem and sets its value for the current philo (and the other thread) to know to stop.
+		- sem_wait for stop sem
+		- Set stop value to true
+			- We do not lock print because WE KNOW it is locked right now, HAS to be, and no other thread is looking at stop value.
+		- sem_post for stop received sem and return
+
+4. Cleanup (see cleanup)
+
+
+
+
+Preparations:
+
+
+Program struct
+
+
+- Rules
+	- Already done
+- Time
+	- Already done
+	- None of this is useful for main thread
+- Sem
+	- Already done but no need for a death sem, and need a stop received sem
+	- Also need philo-specific sems
+	- Global sems
+		- Print sem
+		- Start sem
+		- Stuffed sem
+		- Stop sem
+		- Stop received sem
+		- Forks sem
+	- Philo specific (this is technically an array)
+		- Stop value sem
+		- Death value sem
+- pid_t array
+	- Done
+- philo_id
+	- Done
+- is_parent bool
+	- For forks, kinda have to, done
+- pthread_t objects
+	- Only one for main thread
+	- Two for philos
+
+
+
+Depending how I cleanup the parent, it can either post ALL stuffed sems or just post one and inside the wait loop I'd check for the stop value set by the main thread. Would I need a sem for that? Not really because once the stop value's set, stuffed sems are not being posted anymore. So nah.
+
+A question is, does every process see all the sems or do they only see theirs (as far as is possible)?
+Meaning, do the philo specific sems get created after forks or before?
+If they get created before I need an array.
+After, I just need a couple values.
+
+Probably after is better?
+
+One thing: don't need sem names. Can just define them. Don't need fingerprint. Can just unlink them right after creation, fuck it.
+Don't need a single sem array, processes will just fork() and fill their own sems.
 
 
 
