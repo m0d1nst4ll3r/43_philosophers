@@ -273,31 +273,66 @@ Don't need a single sem array, processes will just fork() and fill their own sem
 
 
 
+Data race logic check:
+
+Main thread has stop value
+-> Wait on stop
+-> Set stop value (for stuffed watcher)
+-> Post received
+
+-> In case we stopped because of death but not stuffed, post stuffed in a loop to unlock the stuffed watcher, which will logically exit right after because stop value is set.
+
+Main watcher thread #1 checks stuffed
+-> This waits stuffed in a loop
+-> Upon reaching the end
+	- Lock print
+	- Check stop value
+	- Set stop in loop
+	- Wait received in loop
+	- Post print
+-> This works exactly like death watcher but without printing death
+-> We expect main thread to set stop received too.
+
+Philo threads have stop value + death value
+
+Philo watcher thread #1 checks death
+-> This needs to lock death_value sem
+-> Once death is found
+	- Lock print
+	- Check stop value, this is in case the thread was waiting on print while another death watcher thread of another philo was setting stop
+		- If stop value is set, unlock print and return
+	- Print death msg (this is done ASAP for subject guidelines)
+	- Set stop in loop
+	- Wait received in loop
+	- Post print AFTER waiting received
+		- This ensures that the philo thread waiting on print to check stop value will see stop true once it passes the wait, with no data race with the stop watcher
+		- Similarly ensures any other death watcher thread waiting on print because they found a death will not collide with their stop watcher
+Philo watcher thread #2 checks stop
+-> Wait on stop
+-> Then set stop
+-> Then post received
+
+Philo main thread will
+-> Lock/unlock death value when updating death
+-> Lock/unlock print to check on stop value, hence do not need any stop_value sem
+
+
+Sems:
+
+Global stop
+
+Global stuffed
+
+Local death value
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Logic check:
+- Death value is protected
+- Stop value is always protected (set in print lock, read in print lock)
+	- Even if there is no print lock around a read (e.g in stop watcher threads or main thread), there is, because for the sem to be posted, it HAS to be in a print lock, so the wait will ONLY execute in a print lock, because the lock does not unlock until stop received has been posted, which happens after the boolean write.
+	- All other reads are protected
+-> That's it for data races, this should be all of it
 
 
 

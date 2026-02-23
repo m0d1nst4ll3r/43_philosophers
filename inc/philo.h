@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/20 20:28:09 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/23 18:20:01 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,14 @@ typedef struct s_sem_global
 	sem_t	*forks;
 	sem_t	*print;
 	sem_t	*start;
+	sem_t	*ready;
 	sem_t	*stop;
+	sem_t	*stop_received;
 	sem_t	*stuffed;
 }	t_sem_global;
 
 typedef struct s_sem_philo
 {
-	sem_t	*stop_value;
 	sem_t	*death_value;
 }	t_sem_philo;
 
@@ -87,11 +88,19 @@ typedef struct s_time
 	struct timeval	death;
 }	t_time;
 
+// ================================== THREADS ==================================
+
+typedef struct s_thread
+{
+	pthread_t	thread;
+	bool		is_created;
+}	t_thread;
+
 typedef struct s_threads
 {
-	pthread_t	parent_stuffed_supervisor;
-	pthread_t	philo_death_supervisor;
-	pthread_t	philo_stop_supervisor;
+	t_thread	parent_stuffed_supervisor;
+	t_thread	philo_death_supervisor;
+	t_thread	philo_stop_supervisor;
 }	t_threads;
 
 // ================================ MAIN STRUCT ================================
@@ -111,15 +120,16 @@ typedef struct s_prog
 bool	init_args(t_prog *d, char **av);
 void	init_prog(t_prog *d);
 void	init_malloc(t_prog *d);
-void	init_sem_names(t_prog *d);
-void	init_sem_refs(t_prog *d);
-void	check_sems_avail(t_prog *d);
+void	init_sems(t_prog *d);
 void	do_forks(t_prog *d);
 void	cleanup_prog(t_prog *d);
 
 // Called from do_forks.c
 void	philo_routine(t_prog *d);
-void	supervisor_routine(t_prog *d);
+void	main_routine(t_prog *d);
+
+// Called from philo_routine.c
+void	init_philo_threads(t_prog *d);
 
 // Called from philo_routine.c
 bool	p_think(t_prog *d);
