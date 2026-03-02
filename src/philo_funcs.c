@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:43:04 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 19:05:35 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 15:52:05 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	p_think(t_philo *d)
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
 	pthread_mutex_unlock(d->mutex.print);
 	if (!d->time.meals_eaten && d->id % 2)
-		usleep(d->time.to_eat * 1000);
+		usleep(d->time.to_eat * 500);
 	return (true);
 }
 
