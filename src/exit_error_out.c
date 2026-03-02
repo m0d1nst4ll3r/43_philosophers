@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 16:53:31 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 18:18:55 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 18:20:21 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	print_error(char *err_str)
 	i = 0;
 	while (err_str[i])
 		i++;
-	write(2, "philo : ", 8);
+	write(2, "philo: ", 7);
 	write(2, err_str, i);
 	write(2, "\n", 1);
 }
