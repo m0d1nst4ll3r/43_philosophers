@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:06:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 18:36:51 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 11:51:52 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,24 @@ void	exit_prog(t_prog *d, int exitval)
 	exit(exitval);
 }
 
-void	error_out(t_prog *d, char *err_str)
+// This should be fprintf (or my own ft_fprintf) and it should use errno
+// But this project doesn't allow fprintf/libft/errno, because 42 is dumb
+static void	puterr(char *err_str)
 {
+	unsigned int	i;
+
 	if (!err_str)
 		err_str = EDEFAULT;
+	i = 0;
+	while (err_str[i])
+		i++;
 	write(2, "philo: ", 7);
-	write(2, err_str, sizeof(err_str) - 1);
+	write(2, err_str, i);
 	write(2, "\n", 1);
+}
+
+void	error_out(t_prog *d, char *err_str)
+{
+	puterr(err_str);
 	exit_prog(d, 1);
 }
