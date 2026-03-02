@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/02/19 20:37:14 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/03/02 14:25:10 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,16 +15,15 @@ CFILES		= main.c \
 			  init_args.c \
 			  init_prog.c \
 			  init_malloc.c \
-			  init_sem_names.c \
-			  init_sem_refs.c \
-			  check_sems_avail.c \
-			  do_forks.c \
-			  philo_routine.c \
-			  philo_funcs.c \
-			  supervisor_routine.c \
-			  cleanup_prog.c \
-			  error_out.c \
-			  error_stop.c \
+			  init_global_sems.c \
+			  init_do_forks.c \
+			  sim_philo_routine.c \
+			  sim_philo_funcs.c \
+			  sim_main_routine.c \
+			  sim_signal.c \
+			  exit_cleanup_prog.c \
+			  exit_error_out.c \
+			  exit_error_stop.c \
 			  util_sem.c
 SRCDIR		= src
 SRC			= $(addprefix $(SRCDIR)/, $(CFILES))
@@ -51,7 +50,7 @@ LIBFT_REPO	= https://github.com/m0d1nst4ll3r/43_mylibft
 
 # Compiler settings
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -MMD -MP -O3 $(addprefix -I,$(INCDIR))
+CFLAGS		= -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
 MAKEFLAGS	+= --no-print-directory

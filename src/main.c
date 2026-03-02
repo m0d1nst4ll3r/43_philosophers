@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:38:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 11:05:06 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:26:12 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 static void	print_usage(void)
 {
-	printf("./philo number_of_philosophers time_to_die time_to_eat time_to_sleep\
- [number_of_times_each_philosopher_must_eat]\n\
+	printf("./philo (number_of_philosophers) (time_to_die) (time_to_eat)\
+ (time_to_sleep) [number_of_times_each_philosopher_must_eat]\n\
 Params should be unsigned integers <= 10000. Need at least 1 philosopher.\n");
 }
 

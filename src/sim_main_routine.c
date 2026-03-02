@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 19:13:58 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 13:46:26 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:49:31 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 static void	*stuffed_watcher_thread(void *p)
 {
-	t_prog	*d
-	int		i;
+	t_prog			*d;
+	unsigned int	i;
 
 	d = p;
 	i = 0;
@@ -32,8 +32,8 @@ static void	*stuffed_watcher_thread(void *p)
 		sem_post(d->sem.global.print);
 		return (NULL);
 	}
-	post_stop_loop(d->sem.global.stop);
-	wait_stop_received(d->sem.global.stop);
+	signal_stop(d);
+	wait_stop_received(d);
 	sem_post(d->sem.global.print);
 	return (NULL);
 }
@@ -65,6 +65,5 @@ void	main_routine(t_prog *d)
 	signal_start(d);
 	sem_wait(d->sem.global.stop);
 	d->stop = true;
-	sem_post(d->global.stuffed);
-	pthread_join(d->threads.parent_stuffed_watcher);
+	sem_post(d->sem.global.stuffed);
 }

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 18:41:14 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 13:59:24 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:41:31 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 bool	p_think(t_prog *d)
 {
-//	printf("\t%d: think\n", d->philo_id + 1);
 	sem_wait(d->sem.global.print);
 	if (d->stop)
 	{
@@ -32,13 +31,10 @@ bool	p_think(t_prog *d)
 
 bool	p_eat(t_prog *d)
 {
-//	printf("\t%d: eat\n", d->philo_id + 1);
 	if (d->rules.num_philos == 1)
 		return (false);
 	sem_wait(d->sem.global.forks);
-//	printf("\t\t%d: took fork\n", d->philo_id + 1);
 	sem_wait(d->sem.global.forks);
-//	printf("\t\t%d: took fork\n", d->philo_id + 1);
 	sem_wait(d->sem.global.print);
 	if (d->stop)
 	{
@@ -56,9 +52,7 @@ bool	p_eat(t_prog *d)
 	sem_post(d->sem.global.print);
 	usleep(d->rules.time_to_eat * 1000);
 	sem_post(d->sem.global.forks);
-//	printf("\t\t%d: replaced fork\n", d->philo_id + 1);
 	sem_post(d->sem.global.forks);
-//	printf("\t\t%d: replaced fork\n", d->philo_id + 1);
 	if (++d->time.meals_eaten == d->rules.meals_to_end)
 		sem_post(d->sem.global.stuffed);
 	return (true);
@@ -66,7 +60,6 @@ bool	p_eat(t_prog *d)
 
 bool	p_sleep(t_prog *d)
 {
-//	printf("\t%d: sleep\n", d->philo_id + 1);
 	sem_wait(d->sem.global.print);
 	if (d->stop)
 	{

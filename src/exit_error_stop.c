@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 19:17:45 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 11:44:36 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:17:59 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,6 @@ void	error_stop_parent(t_prog *d, char *err_str)
 void	error_stop_philo(t_prog *d, char *err_str)
 {
 	signal_stop(d);
-	sem_post(d->global.ready);
+	sem_post(d->sem.global.ready);
 	error_out(d, err_str);
 }

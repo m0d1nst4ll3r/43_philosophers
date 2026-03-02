@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:39:40 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 13:40:31 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:10:43 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,4 @@ sem_t	*create_sem(char *sem_name, int value)
 		return (new_sem);
 	sem_unlink(sem_name);
 	return (new_sem);
-}
-
-bool	sem_exists(char *sem_name)
-{
-	sem_t	*sem;
-
-	sem = sem_open(sem_name, 0);
-	if (sem == SEM_FAILED)
-		return (false);
-	sem_close(sem);
-	return (true);
 }

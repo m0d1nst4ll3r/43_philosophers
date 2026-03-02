@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 14:06:05 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:48:19 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,10 @@ static void	signal_death(t_prog *d)
 		sem_post(d->sem.global.print);
 		return ;
 	}
-	gettimeofday(&d->time.current);
-	printf("%d %d died\n",	ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id);
-	post_stop_loop(d);
+	gettimeofday(&d->time.current, NULL);
+	printf("%d %d died\n",
+		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
+	signal_stop(d);
 	wait_stop_received(d);
 	sem_post(d->sem.global.print);
 }
@@ -71,11 +72,15 @@ static void	*death_watcher_thread(void *p)
 }
 
 // Created from philos - watches for stop value, tells philo to stop
-static void	*stop_watcher_thread(t_prog *d)
+static void	*stop_watcher_thread(void *p)
 {
+	t_prog	*d;
+
+	d = p;
 	sem_wait(d->sem.global.stop);
 	d->stop = true;
 	sem_post(d->sem.global.stop_received);
+	return (NULL);
 }
 
 // Norm prevents me from doing small static functions (> 5)
@@ -89,13 +94,13 @@ void	philo_routine(t_prog *d)
 {
 	create_death_value_sem(d);
 	if (pthread_create(&d->threads.philo_stop_watcher.thread, NULL,
-				stop_watcher_thread, d))
+			stop_watcher_thread, d))
 		error_stop_philo(d, ETHREAD);
 	if (pthread_create(&d->threads.philo_death_watcher.thread, NULL,
-				death_watcher_thread, d))
+			death_watcher_thread, d))
 		error_stop_philo(d, ETHREAD);
-	sem_post(d->global.ready);
-	sem_wait(d->global.start);
+	sem_post(d->sem.global.ready);
+	sem_wait(d->sem.global.start);
 	gettimeofday(&d->time.start, NULL);
 	d->time.death = ft_time_add(d->time.start, d->rules.time_to_die * 1000);
 	while (p_think(d) && p_eat(d) && p_sleep(d))

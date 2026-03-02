@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 12:06:07 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:18:57 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 
 // TODO Remove libft eventually and bake functions into program
 # include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
+# include <pthread.h>	// pthread_create, pthread_join
+# include <string.h>	// memset
 # include <stdio.h>		// printf
 # include <stdbool.h>	// bool
 # include <sys/time.h>	// gettimeofday
@@ -110,32 +112,34 @@ typedef struct s_prog
 	t_threads		threads;
 }	t_prog;
 
-// Called from main.c
+// Init
 bool	init_args(t_prog *d, char **av);
 void	init_prog(t_prog *d);
 void	init_malloc(t_prog *d);
-void	init_sems(t_prog *d);
+void	init_global_sems(t_prog *d);
 void	do_forks(t_prog *d);
-void	cleanup_prog(t_prog *d);
 
-// Called from do_forks.c
+// Exit
+void	cleanup_prog(t_prog *d);
+void	error_out(t_prog *d, char *err_str);
+void	error_stop_parent(t_prog *d, char *err_str);
+void	error_stop_philo(t_prog *d, char *err_str);
+
+// Sim
 void	philo_routine(t_prog *d);
 void	main_routine(t_prog *d);
 
-// Called from philo_routine.c
-void	init_philo_threads(t_prog *d);
+// Sim - Com
+void	signal_start(t_prog *d);
+void	signal_stop(t_prog *d);
+void	wait_stop_received(t_prog *d);
 
-// Called from philo_routine.c
+// Sim - Philo
 bool	p_think(t_prog *d);
 bool	p_eat(t_prog *d);
 bool	p_sleep(t_prog *d);
 
 // Util
-bool	sem_exists(char *sem_name);
 sem_t	*create_sem(char *sem_name, int value);
-
-// Error
-void	error_out(t_prog *d, char *err_str);
-void	error_stop(t_prog *d, char *err_str);
 
 #endif

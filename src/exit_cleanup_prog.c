@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 18:05:11 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 13:22:18 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:23:25 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ static void	wait_pids(t_prog *d)
 static void	join_threads(t_prog *d)
 {
 	if (d->threads.parent_stuffed_watcher.is_created)
-		pthread_join(d->threads.parent_stuffed_watcher.thread);
+		pthread_join(d->threads.parent_stuffed_watcher.thread, NULL);
 	if (d->threads.philo_death_watcher.is_created)
-		pthread_join(d->threads.philo_death_watcher.thread);
+		pthread_join(d->threads.philo_death_watcher.thread, NULL);
 	if (d->threads.philo_stop_watcher.is_created)
-		pthread_join(d->threads.philo_stop_watcher.thread);
+		pthread_join(d->threads.philo_stop_watcher.thread, NULL);
 }
 
 static void	close_sems(t_prog *d)
