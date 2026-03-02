@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 14:48:19 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 15:39:48 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,8 @@ static void	*death_watcher_thread(void *p)
 		death_time = d->time.death;
 		sem_post(d->sem.philo.death_value);
 		gettimeofday(&current_time, NULL);
-		if (ft_time_sub(current_time, death_time) >= 0)
+		if (current_time.tv_sec >= death_time.tv_sec
+			&& current_time.tv_usec >= death_time.tv_usec)
 			break ;
 		usleep(SUPERVISOR_USLEEP);
 	}
@@ -96,9 +97,11 @@ void	philo_routine(t_prog *d)
 	if (pthread_create(&d->threads.philo_stop_watcher.thread, NULL,
 			stop_watcher_thread, d))
 		error_stop_philo(d, ETHREAD);
+	d->threads.philo_stop_watcher.is_created = true;
 	if (pthread_create(&d->threads.philo_death_watcher.thread, NULL,
 			death_watcher_thread, d))
 		error_stop_philo(d, ETHREAD);
+	d->threads.philo_death_watcher.is_created = true;
 	sem_post(d->sem.global.ready);
 	sem_wait(d->sem.global.start);
 	gettimeofday(&d->time.start, NULL);

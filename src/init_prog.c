@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:38:11 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 10:48:04 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 15:39:26 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	init_prog(t_prog *d)
 {
+	d->time.death.tv_sec = LONG_MAX;
 	d->is_parent = true;
 	d->sem.global.forks = SEM_FAILED;
 	d->sem.global.print = SEM_FAILED;

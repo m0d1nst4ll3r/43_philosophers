@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 18:41:14 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 14:41:31 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 15:51:53 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	p_think(t_prog *d)
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
 	sem_post(d->sem.global.print);
 	if (!d->time.meals_eaten && d->philo_id % 2)
-		usleep(d->rules.time_to_eat * 1000);
+		usleep(d->rules.time_to_eat * 500);
 	return (true);
 }
 

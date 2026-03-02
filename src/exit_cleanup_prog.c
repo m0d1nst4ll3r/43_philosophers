@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 18:05:11 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 14:23:25 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 15:17:39 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ static void	close_sems(t_prog *d)
 		sem_close(d->sem.global.print);
 	if (d->sem.global.start != SEM_FAILED)
 		sem_close(d->sem.global.start);
+	if (d->sem.global.ready != SEM_FAILED)
+		sem_close(d->sem.global.ready);
 	if (d->sem.global.stop != SEM_FAILED)
 		sem_close(d->sem.global.stop);
 	if (d->sem.global.stop_received != SEM_FAILED)
