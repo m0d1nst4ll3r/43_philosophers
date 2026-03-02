@@ -1,21 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_sem_refs.c                                    :+:      :+:    :+:   */
+/*   sim_signal.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 17:45:45 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/20 14:53:37 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/03/02 11:39:58 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/03/02 13:10:42 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	init_sem_refs(t_prog *d)
+void	signal_stop(t_prog *d)
 {
-	d->sem.forks.ref = create_sem(d->sem.forks.name, d->rules.num_philos);
-	d->sem.print.ref = create_sem(d->sem.print.name, 1);
-	if (d->sem.forks.ref == SEM_FAILED || d->sem.print.ref == SEM_FAILED)
-		error_out(d, ESEM);
+	unsigned int	i;
+
+	i = 0;
+	while (i < d->rules.num_philos + 1)
+	{
+		sem_post(d->sem.global.stop);
+		i++;
+	}
+}
+
+void	signal_start(t_prog *d)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < d->rules.num_philos)
+	{
+		sem_post(d->sem.global.start);
+		i++;
+	}
+}
+
+void	wait_stop_received(t_prog *d)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < d->rules.num_philos)
+	{
+		sem_wait(d->sem.global.stop_received);
+		i++;
+	}
 }

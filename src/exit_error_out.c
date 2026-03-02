@@ -1,39 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_routine.c                                    :+:      :+:    :+:   */
+/*   exit_error_out.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/20 15:18:51 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/18 16:53:31 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/03/02 11:56:30 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	wait_start(t_prog *d)
+static void	exit_prog(t_prog *d, unsigned char exitval)
 {
-	while (!sem_exists(d->sem.start.name)
-		&& !sem_exists(d->sem.stop.name))
-		;
+	cleanup_prog(d);
+	exit(exitval);
 }
 
-static void	update_start_time(t_prog *d)
+static void	print_error(char *err_str)
 {
-	gettimeofday(&d->time.start, NULL);
-	d->time.death = ft_time_add(d->time.start, d->rules.time_to_die * 1000);
+	unsigned int	i;
+
+	if (!err_str)
+		err_str = EDEFAULT;
+	i = 0;
+	while (err_str[i])
+		i++;
+	write(2, "philo : ", 8);
+	write(2, err_str, i);
+	write(2, "\n", 1);
 }
 
-static void	philo_loop(t_prog *d)
+void	error_out(t_prog *d, char *err_str)
 {
-	while (p_think(d) && p_eat(d) && p_sleep(d))
-		;
-}
-
-void	philo_routine(t_prog *d)
-{
-	wait_start(d);
-	update_start_time(d);
-	philo_loop(d);
+	print_error(err_str);
+	exit_prog(d, 1);
 }

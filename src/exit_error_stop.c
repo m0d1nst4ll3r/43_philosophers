@@ -1,41 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_stop.c                                       :+:      :+:    :+:   */
+/*   exit_error_stop.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 19:17:45 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 20:29:08 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 11:44:36 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	kill_philos(t_prog *d)
+// Fires in case of fork failure or parent thread create failure
+void	error_stop_parent(t_prog *d, char *err_str)
 {
-	unsigned int	i;
-
-	i = 0;
-	while (i < d->rules.num_philos)
-	{
-		kill(d->philo_pids[i], SIGKILL);
-		i++;
-	}
+	signal_stop(d);
+	signal_start(d);
+	error_out(d, err_str);
 }
 
-// Fires if stop sem can't be created - have to force kill children for lack
-//	of any other way to tell them to stop
-static void	critical_stop(t_prog *d)
+// Fires in case of child malloc/sem/thread create failure
+void	error_stop_philo(t_prog *d, char *err_str)
 {
-	kill_philos(d);
-	error_out(d, ESTOP);
-}
-
-void	error_stop(t_prog *d, char *err_str)
-{
-	d->sem.stop.ref = create_sem(d->sem.stop.name, 0);
-	if (d->sem.stop.ref == SEM_FAILED)
-		critical_stop(d);
+	signal_stop(d);
+	sem_post(d->global.ready);
 	error_out(d, err_str);
 }

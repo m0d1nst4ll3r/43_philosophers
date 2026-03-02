@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:38:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/20 14:54:12 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 11:05:06 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,7 @@ int	main(int ac, char **av)
 	}
 	init_prog(&data);
 	init_malloc(&data);
-	init_sem_names(&data);
-	init_sem_refs(&data);
-	check_sems_avail(&data);
+	init_global_sems(&data);
 	do_forks(&data);
 	cleanup_prog(&data);
 	return (0);

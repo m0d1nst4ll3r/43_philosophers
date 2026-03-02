@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/23 18:20:01 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 12:06:07 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,24 @@
 # define EDEFAULT	"Unknown error"
 # define EMALLOC	"Malloc failure"
 # define ESEM		"Failed creating semaphore"
-# define ESEMAVAIL	"A semaphore name is already in use by another process"
 # define EFORK		"Fork failure"
-# define ESTOP		"Critical: could not create stop sem, possibly after failed \
-fork or other critical error"
+# define ETHREAD	"Failed creating thread"
 
-# define SEM_NAME_PREFIX			"philo_sem_"
-# define SEM_NAME_SUFFIX_FORKS		"_forks"
-# define SEM_NAME_SUFFIX_PRINT		"_print"
-# define SEM_NAME_SUFFIX_START		"_start"
-# define SEM_NAME_SUFFIX_DEATH		"_death"
-# define SEM_NAME_SUFFIX_STOP		"_stop"
-# define SEM_NAME_SUFFIX_ERROR		"_error"
-# define SEM_NAME_SUFFIX_STUFFED	"_stuffed"
+# define SEM_FORKS_NAME			"philo_sem_forks"
+# define SEM_PRINT_NAME			"philo_sem_print"
+# define SEM_START_NAME			"philo_sem_start"
+# define SEM_READY_NAME			"philo_sem_ready"
+# define SEM_STOP_NAME			"philo_sem_stop"
+# define SEM_STOP_RECEIVED_NAME	"philo_sem_stop_received"
+# define SEM_STUFFED_NAME		"philo_sem_stuffed"
+# define SEM_DEATH_VALUE_NAME	"philo_sem_death_value"
 
 // TODO Remove libft eventually and bake functions into program
 # include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
 # include <stdio.h>		// printf
 # include <stdbool.h>	// bool
-# include <errno.h>		// errno
-# include <string.h>	// strerror
 # include <sys/time.h>	// gettimeofday
 # include <sys/wait.h>	// waitpid
-# include <sys/types.h>	// kill
-# include <signal.h>	// kill
 # include <fcntl.h>		// O_* constants
 # include <semaphore.h>	// sem_open, sem_close, sem_unlink, sem_wait, sem_post
 
@@ -98,9 +92,9 @@ typedef struct s_thread
 
 typedef struct s_threads
 {
-	t_thread	parent_stuffed_supervisor;
-	t_thread	philo_death_supervisor;
-	t_thread	philo_stop_supervisor;
+	t_thread	parent_stuffed_watcher;
+	t_thread	philo_death_watcher;
+	t_thread	philo_stop_watcher;
 }	t_threads;
 
 // ================================ MAIN STRUCT ================================
