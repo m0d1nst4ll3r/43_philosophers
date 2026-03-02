@@ -6,17 +6,11 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 16:53:31 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 11:56:30 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 18:18:55 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static void	exit_prog(t_prog *d, unsigned char exitval)
-{
-	cleanup_prog(d);
-	exit(exitval);
-}
 
 static void	print_error(char *err_str)
 {
@@ -35,5 +29,6 @@ static void	print_error(char *err_str)
 void	error_out(t_prog *d, char *err_str)
 {
 	print_error(err_str);
-	exit_prog(d, 1);
+	cleanup_prog(d);
+	exit(1);
 }
