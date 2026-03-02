@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:41:01 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 18:56:24 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 19:04:54 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,6 @@ int	main(int ac, char **av)
 	}
 	prepare_sim(&data);
 	supervise_sim(&data);
-	end_sim(&data);
-	exit_prog(&data, 0);
+	cleanup_prog(&data);
+	return (0);
 }

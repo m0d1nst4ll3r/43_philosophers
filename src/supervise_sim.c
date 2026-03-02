@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 01:59:16 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 17:08:07 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 19:21:10 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,21 @@ static bool	check_deaths(t_prog *d)
 	struct timeval	death_time;
 
 	i = 0;
-	while (i < d->num_philos)
+	while (i < d->rules.num_philos)
 	{
-		pthread_mutex_lock(&d->philos[i].mutex.death_time);
+		pthread_mutex_lock(&d->philos[i].mutex.death_time.obj);
 		death_time = d->philos[i].time.death;
-		pthread_mutex_unlock(&d->philos[i].mutex.death_time);
+		pthread_mutex_unlock(&d->philos[i].mutex.death_time.obj);
 		if ((d->time.current.tv_sec == death_time.tv_sec
 				&& d->time.current.tv_usec >= death_time.tv_usec)
 			|| d->time.current.tv_sec > death_time.tv_sec)
 		{
-			pthread_mutex_lock(&d->mutex.print);
+			pthread_mutex_lock(&d->mutex.print.obj);
 			d->time.is_end_of_sim = true;
 			gettimeofday(&d->time.current, NULL);
 			printf("%d %d died\n",
 				ft_time_sub(d->time.current, d->time.start) / 1000, i + 1);
-			pthread_mutex_unlock(&d->mutex.print);
+			pthread_mutex_unlock(&d->mutex.print.obj);
 			return (true);
 		}
 		i++;
@@ -44,14 +44,14 @@ static bool	check_stuffed(t_prog *d)
 {
 	unsigned int	stuffed_philos;
 
-	pthread_mutex_lock(&d->mutex.stuffed_philos);
+	pthread_mutex_lock(&d->mutex.stuffed_philos.obj);
 	stuffed_philos = d->time.stuffed_philos;
-	pthread_mutex_unlock(&d->mutex.stuffed_philos);
-	if (stuffed_philos == d->num_philos)
+	pthread_mutex_unlock(&d->mutex.stuffed_philos.obj);
+	if (stuffed_philos == d->rules.num_philos)
 	{
-		pthread_mutex_lock(&d->mutex.print);
+		pthread_mutex_lock(&d->mutex.print.obj);
 		d->time.is_end_of_sim = true;
-		pthread_mutex_unlock(&d->mutex.print);
+		pthread_mutex_unlock(&d->mutex.print.obj);
 		return (true);
 	}
 	return (false);

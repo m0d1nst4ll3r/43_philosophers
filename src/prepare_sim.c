@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 21:58:42 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 17:08:50 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 19:24:11 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,17 @@ static void	init_philos(t_prog *d)
 	unsigned int	i;
 
 	i = 0;
-	while (i < d->num_philos)
+	while (i < d->rules.num_philos)
 	{
 		d->philos[i].id = i;
 		if (!i)
 			d->philos[i].mutex.rfork
-				= &d->philos[d->num_philos - 1].mutex.lfork;
+				= &d->philos[d->rules.num_philos - 1].mutex.lfork.obj;
 		else
-			d->philos[i].mutex.rfork = &d->philos[i - 1].mutex.lfork;
-		d->philos[i].mutex.stuffed_philos = &d->mutex.stuffed_philos;
-		d->philos[i].mutex.print = &d->mutex.print;
-		d->philos[i].time.to_die = d->time.to_die;
-		d->philos[i].time.to_eat = d->time.to_eat;
-		d->philos[i].time.to_sleep = d->time.to_sleep;
-		d->philos[i].time.meals_to_end = d->time.meals_to_end;
-		d->philos[i].time.meals_eaten = 0;
+			d->philos[i].mutex.rfork = &d->philos[i - 1].mutex.lfork.obj;
+		d->philos[i].mutex.stuffed_philos = &d->mutex.stuffed_philos.obj;
+		d->philos[i].mutex.print = &d->mutex.print.obj;
+		d->philos[i].rules = d->rules;
 		d->philos[i].time.stuffed_philos = &d->time.stuffed_philos;
 		d->philos[i].time.is_end_of_sim = &d->time.is_end_of_sim;
 		i++;
@@ -43,14 +39,22 @@ static void	create_mutexes(t_prog *d)
 	unsigned int	i;
 
 	i = 0;
-	while (i < d->num_philos)
+	while (i < d->rules.num_philos)
 	{
-		pthread_mutex_init(&d->philos[i].mutex.lfork, NULL);
-		pthread_mutex_init(&d->philos[i].mutex.death_time, NULL);
+		if (pthread_mutex_init(&d->philos[i].mutex.lfork.obj, NULL))
+			error_out(d, EMUTEX);
+		d->philos[i].mutex.lfork.created = true;
+		if (pthread_mutex_init(&d->philos[i].mutex.death_time.obj, NULL))
+			error_out(d, EMUTEX);
+		d->philos[i].mutex.death_time.created = true;
 		i++;
 	}
-	pthread_mutex_init(&d->mutex.print, NULL);
-	pthread_mutex_init(&d->mutex.stuffed_philos, NULL);
+	if (pthread_mutex_init(&d->mutex.print.obj, NULL))
+		error_out(d, EMUTEX);
+	d->mutex.print.created = true;
+	if (pthread_mutex_init(&d->mutex.stuffed_philos.obj, NULL))
+		error_out(d, EMUTEX);
+	d->mutex.stuffed_philos.created = true;
 }
 
 static void	create_threads(t_prog *d)
@@ -58,9 +62,16 @@ static void	create_threads(t_prog *d)
 	unsigned int	i;
 
 	i = 0;
-	while (i < d->num_philos)
+	while (i < d->rules.num_philos)
 	{
-		pthread_create(&d->philos[i].thread, NULL, philo_thread, d->philos + i);
+		if (pthread_create(&d->philos[i].thread.obj, NULL,
+				philo_thread, d->philos + i))
+		{
+			d->time.is_end_of_sim = true;
+			pthread_mutex_unlock(&d->mutex.print.obj);
+			error_out(d, ETHREAD);
+		}
+		d->philos[i].thread.created = true;
 		i++;
 	}
 }
@@ -71,9 +82,9 @@ static void	init_time(t_prog *d)
 	struct timeval	death_time;
 
 	gettimeofday(&d->time.start, NULL);
-	death_time = ft_time_add(d->time.start, d->time.to_die);
+	death_time = ft_time_add(d->time.start, d->rules.time_to_die);
 	i = 0;
-	while (i < d->num_philos)
+	while (i < d->rules.num_philos)
 	{
 		d->philos[i].time.start = d->time.start;
 		d->philos[i].time.death = death_time;
@@ -84,15 +95,14 @@ static void	init_time(t_prog *d)
 // Does malloc, prepares all philo structs
 void	prepare_sim(t_prog *d)
 {
-	d->time.is_end_of_sim = false;
-	d->time.stuffed_philos = 0;
-	d->philos = malloc(sizeof(*d->philos) * d->num_philos);
+	d->philos = malloc(sizeof(*d->philos) * d->rules.num_philos);
 	if (!d->philos)
 		error_out(d, EMALLOC);
+	memset(d->philos, 0, sizeof(*d->philos) * d->rules.num_philos);
 	init_philos(d);
 	create_mutexes(d);
-	pthread_mutex_lock(&d->mutex.print);
+	pthread_mutex_lock(&d->mutex.print.obj);
 	create_threads(d);
 	init_time(d);
-	pthread_mutex_unlock(&d->mutex.print);
+	pthread_mutex_unlock(&d->mutex.print.obj);
 }

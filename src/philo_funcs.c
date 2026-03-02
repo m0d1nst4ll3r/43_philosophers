@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:43:04 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 17:09:13 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 19:23:48 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	p_think(t_philo *d)
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
 	pthread_mutex_unlock(d->mutex.print);
 	if (!d->time.meals_eaten && d->id % 2)
-		usleep(d->time.to_eat / 2);
+		usleep(d->rules.time_to_eat / 2);
 	return (true);
 }
 
@@ -38,29 +38,29 @@ static void	increment_stuffed(t_philo *d)
 
 bool	p_eat(t_philo *d)
 {
-	if (&d->mutex.lfork == d->mutex.rfork)
+	if (&d->mutex.lfork.obj == d->mutex.rfork)
 		return (false);
-	pthread_mutex_lock(&d->mutex.lfork);
+	pthread_mutex_lock(&d->mutex.lfork.obj);
 	pthread_mutex_lock(d->mutex.rfork);
 	pthread_mutex_lock(d->mutex.print);
 	if (*d->time.is_end_of_sim)
 	{
 		pthread_mutex_unlock(d->mutex.print);
-		pthread_mutex_unlock(&d->mutex.lfork);
+		pthread_mutex_unlock(&d->mutex.lfork.obj);
 		pthread_mutex_unlock(d->mutex.rfork);
 		return (false);
 	}
 	gettimeofday(&d->time.current, NULL);
-	pthread_mutex_lock(&d->mutex.death_time);
-	d->time.death = ft_time_add(d->time.current, d->time.to_die);
-	pthread_mutex_unlock(&d->mutex.death_time);
+	pthread_mutex_lock(&d->mutex.death_time.obj);
+	d->time.death = ft_time_add(d->time.current, d->rules.time_to_die);
+	pthread_mutex_unlock(&d->mutex.death_time.obj);
 	printf("%d %d is eating\n",
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
 	pthread_mutex_unlock(d->mutex.print);
-	usleep(d->time.to_eat);
-	pthread_mutex_unlock(&d->mutex.lfork);
+	usleep(d->rules.time_to_eat);
+	pthread_mutex_unlock(&d->mutex.lfork.obj);
 	pthread_mutex_unlock(d->mutex.rfork);
-	if (++d->time.meals_eaten == d->time.meals_to_end)
+	if (++d->time.meals_eaten == d->rules.meals_to_end)
 		increment_stuffed(d);
 	return (true);
 }
@@ -77,6 +77,6 @@ bool	p_sleep(t_philo *d)
 	printf("%d %d is sleeping\n",
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->id + 1);
 	pthread_mutex_unlock(d->mutex.print);
-	usleep(d->time.to_sleep);
+	usleep(d->rules.time_to_sleep);
 	return (true);
 }
