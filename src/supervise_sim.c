@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 01:59:16 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 19:05:49 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:08:07 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ static bool	check_deaths(t_prog *d)
 		pthread_mutex_lock(&d->philos[i].mutex.death_time);
 		death_time = d->philos[i].time.death;
 		pthread_mutex_unlock(&d->philos[i].mutex.death_time);
-		if (ft_time_sub(death_time, d->time.current) <= 0)
+		if ((d->time.current.tv_sec == death_time.tv_sec
+				&& d->time.current.tv_usec >= death_time.tv_usec)
+			|| d->time.current.tv_sec > death_time.tv_sec)
 		{
 			pthread_mutex_lock(&d->mutex.print);
 			d->time.is_end_of_sim = true;

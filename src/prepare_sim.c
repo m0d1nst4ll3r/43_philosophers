@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 21:58:42 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 15:36:39 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:08:50 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static void	init_time(t_prog *d)
 	struct timeval	death_time;
 
 	gettimeofday(&d->time.start, NULL);
-	death_time = ft_time_add(d->time.start, d->time.to_die * 1000);
+	death_time = ft_time_add(d->time.start, d->time.to_die);
 	i = 0;
 	while (i < d->num_philos)
 	{

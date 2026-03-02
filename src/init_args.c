@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:23:51 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/19 18:56:54 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:08:40 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,8 @@ bool	init_args(t_prog *d, char **av)
 				sizeof(d->time.meals_to_end) | ATOX_U) < 0)
 		|| d->time.meals_to_end > 10000)
 		return (false);
+	d->time.to_die *= 1000;
+	d->time.to_eat *= 1000;
+	d->time.to_sleep *= 1000;
 	return (true);
 }
