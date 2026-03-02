@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 15:39:48 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:13:34 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,9 @@ static void	*death_watcher_thread(void *p)
 		death_time = d->time.death;
 		sem_post(d->sem.philo.death_value);
 		gettimeofday(&current_time, NULL);
-		if (current_time.tv_sec >= death_time.tv_sec
-			&& current_time.tv_usec >= death_time.tv_usec)
+		if ((current_time.tv_sec == death_time.tv_sec
+				&& current_time.tv_usec >= death_time.tv_usec)
+			|| current_time.tv_sec > death_time.tv_sec)
 			break ;
 		usleep(SUPERVISOR_USLEEP);
 	}
@@ -105,10 +106,13 @@ void	philo_routine(t_prog *d)
 	sem_post(d->sem.global.ready);
 	sem_wait(d->sem.global.start);
 	gettimeofday(&d->time.start, NULL);
-	d->time.death = ft_time_add(d->time.start, d->rules.time_to_die * 1000);
+	d->time.death = ft_time_add(d->time.start, d->rules.time_to_die);
 	while (p_think(d) && p_eat(d) && p_sleep(d))
 		;
-	sem_wait(d->sem.philo.death_value);
-	d->time.death = d->time.start;
-	sem_post(d->sem.philo.death_value);
+	if (d->stop)
+	{
+		sem_wait(d->sem.philo.death_value);
+		d->time.death = d->time.start;
+		sem_post(d->sem.philo.death_value);
+	}
 }

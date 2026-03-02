@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 14:18:57 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:16:07 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PHILO_H
 
 # define SUPERVISOR_USLEEP	1000 // Limits how often supervisor checks on philos
+# define PHILO_ODD_USLEEP	1000 // Forces philos to wait to avoid deaths
 
 # define EDEFAULT	"Unknown error"
 # define EMALLOC	"Malloc failure"

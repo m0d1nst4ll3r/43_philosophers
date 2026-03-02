@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 18:41:14 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 15:51:53 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/02 17:16:07 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ bool	p_think(t_prog *d)
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
 	sem_post(d->sem.global.print);
 	if (!d->time.meals_eaten && d->philo_id % 2)
-		usleep(d->rules.time_to_eat * 500);
+		usleep(d->rules.time_to_eat / 2);
+	else if (d->rules.num_philos % 2)
+		usleep(PHILO_ODD_USLEEP);
 	return (true);
 }
 
@@ -45,12 +47,12 @@ bool	p_eat(t_prog *d)
 	}
 	gettimeofday(&d->time.current, NULL);
 	sem_wait(d->sem.philo.death_value);
-	d->time.death = ft_time_add(d->time.current, d->rules.time_to_die * 1000);
+	d->time.death = ft_time_add(d->time.current, d->rules.time_to_die);
 	sem_post(d->sem.philo.death_value);
 	printf("%d %d is eating\n",
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
 	sem_post(d->sem.global.print);
-	usleep(d->rules.time_to_eat * 1000);
+	usleep(d->rules.time_to_eat);
 	sem_post(d->sem.global.forks);
 	sem_post(d->sem.global.forks);
 	if (++d->time.meals_eaten == d->rules.meals_to_end)
@@ -70,6 +72,6 @@ bool	p_sleep(t_prog *d)
 	printf("%d %d is sleeping\n",
 		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
 	sem_post(d->sem.global.print);
-	usleep(d->rules.time_to_sleep * 1000);
+	usleep(d->rules.time_to_sleep);
 	return (true);
 }
