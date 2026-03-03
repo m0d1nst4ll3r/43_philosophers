@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/03/02 14:25:10 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/03/03 14:03:47 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,13 +24,17 @@ CFILES		= main.c \
 			  exit_cleanup_prog.c \
 			  exit_error_out.c \
 			  exit_error_stop.c \
-			  util_sem.c
+			  util_sem.c \
+			  util_libft.c \
+			  util_libft2.c \
+			  util_atox.c \
+			  util_atox_convert.c \
+			  util_itoa.c
 SRCDIR		= src
 SRC			= $(addprefix $(SRCDIR)/, $(CFILES))
 
 # Header directories
-INCDIR		= inc \
-			  libft/inc
+INCDIR		= inc
 
 # Build directory
 BUILDDIR	= .build
@@ -43,10 +47,7 @@ DEP			= $(OBJ:.o=.d)
 NAME		= philo
 
 # Libraries
-LIB			= $(LIBFT)
 LINK		= -lpthread
-LIBFT		= libft/libft.a
-LIBFT_REPO	= https://github.com/m0d1nst4ll3r/43_mylibft
 
 # Compiler settings
 CC			= cc
@@ -60,26 +61,19 @@ MAKEFLAGS	:= $(MAKEFLAGS) $(if $(filter -j%,$(MAKEFLAGS)),,-j)
 all:		$(NAME)
 
 # Link
-$(NAME):	$(OBJ) $(LIB)
+$(NAME):	$(OBJ)
 			$(CC) $^ $(LINK) -o $@
 
-# Build libraries
-$(LIBFT):
-			@if [ ! -d $(dir $(LIBFT)) ]; then git clone $(LIBFT_REPO) $(dir $(LIBFT)); fi
-			$(MAKE) -C $(@D)
-
 # Compile source -> object (auto-create directories)
-$(BUILDDIR)/%.o: %.c | $(LIB)
+$(BUILDDIR)/%.o: %.c
 			@mkdir -p $(@D)
 			$(CC) $(CFLAGS) -c -o $@ $<
 
 # Cleanup
 clean:
-			@for f in $(dir $(LIB)); do $(MAKE) -C $$f clean; done
 			rm -rf $(BUILDDIR)
 
 fclean:
-			@for f in $(dir $(LIB)); do $(MAKE) -C $$f fclean; done
 			rm -rf $(NAME) $(BUILDDIR)
 
 re:

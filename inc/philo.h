@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 17:16:07 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:13:23 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,18 @@
 # define SEM_DEATH_VALUE_NAME	"philo_sem_death_value"
 
 // TODO Remove libft eventually and bake functions into program
-# include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
-# include <pthread.h>	// pthread_create, pthread_join
-# include <string.h>	// memset
-# include <stdio.h>		// printf
-# include <stdbool.h>	// bool
-# include <sys/time.h>	// gettimeofday
-# include <sys/wait.h>	// waitpid
-# include <fcntl.h>		// O_* constants
-# include <semaphore.h>	// sem_open, sem_close, sem_unlink, sem_wait, sem_post
+# include "philo_util.h"	// ft_atox, ft_time_sub, ft_time_add
+# include <pthread.h>		// pthread_create, pthread_join
+# include <string.h>		// memset
+# include <stdio.h>			// printf
+# include <stdbool.h>		// bool
+# include <unistd.h>		// usleep, write, fork
+# include <stdlib.h>		// malloc, free, exit
+# include <limits.h>		// LONG_MAX
+# include <sys/time.h>		// gettimeofday
+# include <sys/wait.h>		// waitpid
+# include <fcntl.h>			// O_* constants
+# include <semaphore.h>		// sem_open, close, unlink, wait, post
 
 // ================================ SEMAPHORES =================================
 
