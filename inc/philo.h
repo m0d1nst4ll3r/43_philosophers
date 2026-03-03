@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 19:23:34 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 09:45:21 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 # define PHILO_H
 
 # define SUPERVISOR_USLEEP	1000 // Limits how often supervisor checks on philos
-
-# define BSIZE		31 // For custom printing
 
 # define EDEFAULT	"Unknown error"
 # define EMALLOC	"Malloc error"
@@ -105,9 +103,6 @@ typedef struct s_prog
 	t_main_mutex	mutex;
 	t_rules			rules;
 }	t_prog;
-
-// print_message.c
-void	print_message(int time, int id, char *str);
 
 // init_exit.c
 void	error_out(t_prog *d, char *err_str);
