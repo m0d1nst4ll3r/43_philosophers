@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/03 12:48:38 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:05:45 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define PHILO_UTIL_H
 
 # include <sys/time.h>	// struct timeval definition
-# include <string.h>	// size_t definition
+# include <string.h>	// size_t definition, memset
 
 # define BASE2		"01"
 # define BASE8		"01234567"
@@ -74,7 +74,6 @@ int				ft_atox(char *str, char *base, void *var, int params);
 
 // Used in atox
 int				ft_atox_convert(t_atox *d, int *i);
-void			*ft_memset(void *s, int c, size_t n);
 char			*ft_strchr(char *s, char c);
 char			*ft_strchr_case(char *s, char c);
 int				ft_isspace(char c);

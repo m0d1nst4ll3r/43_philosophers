@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 14:04:41 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/03 12:41:33 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:01:35 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ int	ft_atox(char *str, char *base, void *var, int params)
 	init_atox(&d, params);
 	i = 0;
 	skip_preceding(&d, &i);
-	ft_memset(d.var, 0, d.varlen);
+	memset(d.var, 0, d.varlen);
 	if (ft_atox_convert(&d, &i))
 	{
 		if (i)

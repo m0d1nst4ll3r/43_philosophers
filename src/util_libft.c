@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/03 09:46:37 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/03 12:41:46 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:06:59 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,22 +42,4 @@ size_t	ft_strlen(const char *s)
 int	ft_isspace(char c)
 {
 	return (c == ' ' || (c >= '\t' && c <= '\r'));
-}
-
-char	*ft_strchr(char *s, char c)
-{
-	size_t	i;
-
-	if (!s)
-		return (NULL);
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == c)
-			return (s + i);
-		i++;
-	}
-	if (s[i] == c)
-		return (s + i);
-	return (NULL);
 }

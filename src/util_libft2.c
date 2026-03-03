@@ -6,11 +6,29 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:46:46 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/03 12:48:17 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:06:59 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_util.h"
+
+char	*ft_strchr(char *s, char c)
+{
+	size_t	i;
+
+	if (!s)
+		return (NULL);
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == c)
+			return (s + i);
+		i++;
+	}
+	if (s[i] == c)
+		return (s + i);
+	return (NULL);
+}
 
 char	*ft_strchr_case(char *s, char c)
 {
@@ -30,23 +48,6 @@ char	*ft_strchr_case(char *s, char c)
 	if (s[i] == c)
 		return (s + i);
 	return (NULL);
-}
-
-void	*ft_memset(void *s, int c, size_t n)
-{
-	char	*array;
-	size_t	i;
-
-	if (!s)
-		return (s);
-	i = 0;
-	array = (char *)s;
-	while (i < n)
-	{
-		array[i] = (char)c;
-		i++;
-	}
-	return (s);
 }
 
 int	ft_isupper(char c)
