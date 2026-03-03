@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:06:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 19:13:16 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 09:47:53 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	cleanup_prog(t_prog *d)
 {
 	join_threads(d);
 	destroy_mutexes(d);
-	ft_free((void *)&d->philos);
+	free(d->philos);
 }
 
 // This should be fprintf (or my own ft_fprintf) and it should use errno

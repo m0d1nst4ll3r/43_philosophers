@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 21:58:42 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 19:24:11 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 12:32:05 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ static void	init_time(t_prog *d)
 	}
 }
 
-// Does malloc, prepares all philo structs
 void	prepare_sim(t_prog *d)
 {
 	d->philos = malloc(sizeof(*d->philos) * d->rules.num_philos);

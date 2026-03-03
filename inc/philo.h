@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/03 09:45:21 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 12:44:10 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,14 @@
 # define EMUTEX		"Failed creating mutex"
 
 // TODO Remove libft eventually and bake functions into program
-# include "libft.h"		// ft_atox, ft_free, ft_time_sub, ft_time_add
-# include <pthread.h>	// pthread
-# include <sys/time.h>	// gettimeofday
-# include <stdbool.h>	// bool
-# include <string.h>	// memset
-# include <stdio.h>		// printf
+# include "philo_util.h"	// time_sub, time_add, atox
+# include <pthread.h>		// pthread
+# include <stdlib.h>		// malloc, free, exit
+# include <unistd.h>		// usleep, write
+# include <sys/time.h>		// gettimeofday
+# include <stdbool.h>		// bool
+# include <string.h>		// memset
+# include <stdio.h>			// printf
 
 // =================================== RULES ===================================
 typedef struct s_rules
@@ -104,25 +106,20 @@ typedef struct s_prog
 	t_rules			rules;
 }	t_prog;
 
-// init_exit.c
-void	error_out(t_prog *d, char *err_str);
-void	cleanup_prog(t_prog *d);
+// Called from main
+bool			init_args(t_prog *d, char **av);
+void			prepare_sim(t_prog *d);
 
-// parse_args.c
-bool	init_args(t_prog *d, char **av);
+// Philo routine
+void			*philo_thread(void *p);
 
-// prepare_sim.c
-void	prepare_sim(t_prog *d);
-// end_sim.c
-void	end_sim(t_prog *d);
+// Supervisor
+void			supervise_sim(t_prog *d);
 
-// philo.c
-bool	p_think(t_philo *d);
-bool	p_eat(t_philo *d);
-bool	p_sleep(t_philo *d);
-void	*philo_thread(void *p);
+// Exit
+void			error_out(t_prog *d, char *err_str);
+void			cleanup_prog(t_prog *d);
 
-// supervise_sim.c
-void	supervise_sim(t_prog *d);
+// Util functions defined in philo_util.h
 
 #endif
