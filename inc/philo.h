@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/03 12:44:10 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/03 13:49:44 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # define EMUTEX		"Failed creating mutex"
 
 // TODO Remove libft eventually and bake functions into program
-# include "philo_util.h"	// time_sub, time_add, atox
+# include "philo_util.h"	// ft_time_sub, ft_time_add, ft_atox
 # include <pthread.h>		// pthread
 # include <stdlib.h>		// malloc, free, exit
 # include <unistd.h>		// usleep, write
