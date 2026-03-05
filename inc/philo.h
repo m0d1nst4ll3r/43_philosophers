@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/05 10:28:52 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 14:25:23 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@
 # define EFORK		"Fork failure"
 # define ETHREAD	"Failed creating thread"
 
-# define SEM_FORKS_NAME			"philo_sem_forks"
-# define SEM_PRINT_NAME			"philo_sem_print"
-# define SEM_START_NAME			"philo_sem_start"
-# define SEM_READY_NAME			"philo_sem_ready"
-# define SEM_STOP_NAME			"philo_sem_stop"
-# define SEM_STOP_RECEIVED_NAME	"philo_sem_stop_received"
-# define SEM_STUFFED_NAME		"philo_sem_stuffed"
-# define SEM_DEATH_VALUE_NAME	"philo_sem_death_value"
+# define SEM_FORKS_NAME			"/philo_sem_forks"
+# define SEM_PRINT_NAME			"/philo_sem_print"
+# define SEM_START_NAME			"/philo_sem_start"
+# define SEM_READY_NAME			"/philo_sem_ready"
+# define SEM_STOP_NAME			"/philo_sem_stop"
+# define SEM_STOP_RECEIVED_NAME	"/philo_sem_stop_received"
+# define SEM_STUFFED_NAME		"/philo_sem_stuffed"
+# define SEM_DEATH_VALUE_NAME	"/philo_sem_death_value"
 
 // TODO Remove libft eventually and bake functions into program
 # include "philo_util.h"	// ft_atox, ft_time_sub, ft_time_add
