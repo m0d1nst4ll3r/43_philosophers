@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 14:58:24 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/03 13:49:44 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 10:57:56 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ void			prepare_sim(t_prog *d);
 
 // Philo routine
 void			*philo_thread(void *p);
+bool			p_eat(t_philo *d);
 
 // Supervisor
 void			supervise_sim(t_prog *d);

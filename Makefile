@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/03/03 12:45:14 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/03/05 10:54:01 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ CFILES		= main.c \
 			  prepare_sim.c \
 			  supervise_sim.c \
 			  philo.c \
+			  philo_eat.c \
 			  util_libft.c \
 			  util_libft2.c \
 			  util_atox.c \
