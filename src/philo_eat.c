@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 10:48:17 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/05 11:05:35 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 12:08:14 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,15 @@ static void	increment_stuffed(t_philo *d)
 	pthread_mutex_unlock(d->mutex.stuffed_philos);
 }
 
-static bool	print_fork(t_philo *d, int forks_taken)
+static bool	print_fork(t_philo *d, int fork_state)
 {
 	pthread_mutex_lock(d->mutex.print);
 	if (*d->time.is_end_of_sim)
 	{
 		pthread_mutex_unlock(d->mutex.print);
-		pthread_mutex_unlock(&d->mutex.lfork.obj);
-		if (forks_taken == 2)
+		if (fork_state != 3)
+			pthread_mutex_unlock(&d->mutex.lfork.obj);
+		if (fork_state != 1)
 			pthread_mutex_unlock(d->mutex.rfork);
 		return (false);
 	}
@@ -39,12 +40,24 @@ static bool	print_fork(t_philo *d, int forks_taken)
 
 static bool	take_forks(t_philo *d)
 {
-	pthread_mutex_lock(&d->mutex.lfork.obj);
-	if (!print_fork(d, 1))
-		return (false);
-	pthread_mutex_lock(d->mutex.rfork);
-	if (!print_fork(d, 2))
-		return (false);
+	if (&d->mutex.lfork.obj < d->mutex.rfork)
+	{
+		pthread_mutex_lock(&d->mutex.lfork.obj);
+		if (!print_fork(d, 1))
+			return (false);
+		pthread_mutex_lock(d->mutex.rfork);
+		if (!print_fork(d, 2))
+			return (false);
+	}
+	else
+	{
+		pthread_mutex_lock(d->mutex.rfork);
+		if (!print_fork(d, 3))
+			return (false);
+		pthread_mutex_lock(&d->mutex.lfork.obj);
+		if (!print_fork(d, 4))
+			return (false);
+	}
 	return (true);
 }
 
