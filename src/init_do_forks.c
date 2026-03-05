@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 18:35:27 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/05 10:30:41 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 11:43:57 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 void	do_forks(t_prog *d)
 {
 	gettimeofday(&d->time.start, NULL);
+	d->time.start = ft_time_add(d->time.start, START_DELAY_USEC);
 	d->time.death = ft_time_add(d->time.start, d->rules.time_to_die);
 	while (d->philo_id < d->rules.num_philos)
 	{
