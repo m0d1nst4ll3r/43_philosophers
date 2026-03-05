@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/03 14:13:23 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 10:28:52 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 
 # define SUPERVISOR_USLEEP	1000 // Limits how often supervisor checks on philos
 # define PHILO_ODD_USLEEP	1000 // Forces philos to wait to avoid deaths
+# define START_DELAY_USEC	100000 // Ensures sim always starts at 0 ms
 
+// Error messages
 # define EDEFAULT	"Unknown error"
 # define EMALLOC	"Malloc failure"
 # define ESEM		"Failed creating semaphore"

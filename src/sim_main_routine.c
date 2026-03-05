@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 19:13:58 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 14:49:31 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 10:40:19 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,21 @@ static void	wait_ready(t_prog *d)
 	}
 }
 
+static void	delay_start(t_prog *d)
+{
+	int	time_to_wait;
+
+	gettimeofday(&d->time.current, NULL);
+	time_to_wait = ft_time_sub(ft_time_add(d->time.start, START_DELAY_USEC),
+			d->time.current);
+	if (time_to_wait > 0)
+		usleep(time_to_wait);
+}
+
 void	main_routine(t_prog *d)
 {
 	create_thread(d);
+	delay_start(d);
 	wait_ready(d);
 	signal_start(d);
 	sem_wait(d->sem.global.stop);

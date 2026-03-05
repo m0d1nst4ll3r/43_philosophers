@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 17:13:34 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 10:40:06 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,10 +103,9 @@ void	philo_routine(t_prog *d)
 			death_watcher_thread, d))
 		error_stop_philo(d, ETHREAD);
 	d->threads.philo_death_watcher.is_created = true;
+	d->time.start = ft_time_add(d->time.start, START_DELAY_USEC);
 	sem_post(d->sem.global.ready);
 	sem_wait(d->sem.global.start);
-	gettimeofday(&d->time.start, NULL);
-	d->time.death = ft_time_add(d->time.start, d->rules.time_to_die);
 	while (p_think(d) && p_eat(d) && p_sleep(d))
 		;
 	if (d->stop)
