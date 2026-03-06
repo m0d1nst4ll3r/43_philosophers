@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 10:48:17 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/05 12:08:14 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/06 15:29:38 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,6 @@ static bool	take_forks(t_philo *d)
 
 bool	p_eat(t_philo *d)
 {
-	if (&d->mutex.lfork.obj == d->mutex.rfork)
-		return (false);
 	if (!take_forks(d))
 		return (false);
 	pthread_mutex_lock(d->mutex.print);
