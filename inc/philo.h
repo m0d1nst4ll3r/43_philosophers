@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 20:38:49 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/05 14:25:23 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/06 15:25:17 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,7 @@ void	wait_stop_received(t_prog *d);
 bool	p_think(t_prog *d);
 bool	p_eat(t_prog *d);
 bool	p_sleep(t_prog *d);
+void	solo_philo(t_prog *d);
 
 // Util
 sem_t	*create_sem(char *sem_name, int value);

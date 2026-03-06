@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/03/05 14:12:22 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/03/06 15:26:05 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ CFILES		= main.c \
 			  init_do_forks.c \
 			  sim_philo_routine.c \
 			  sim_philo_funcs.c \
+			  sim_philo_solo.c \
 			  sim_main_routine.c \
 			  sim_signal.c \
 			  exit_cleanup_prog.c \
@@ -51,7 +52,7 @@ LINK		= -lpthread
 
 # Compiler settings
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -g -MMD -MP $(addprefix -I,$(INCDIR))
+CFLAGS		= -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
 MAKEFLAGS	+= --no-print-directory

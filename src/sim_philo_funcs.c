@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 18:41:14 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/05 11:39:00 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/06 15:19:12 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,6 @@ static bool	take_forks(t_prog *d)
 
 bool	p_eat(t_prog *d)
 {
-	if (d->rules.num_philos == 1)
-		return (false);
 	if (!take_forks(d))
 		return (false);
 	sem_wait(d->sem.global.print);

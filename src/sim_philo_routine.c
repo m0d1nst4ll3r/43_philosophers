@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/06 15:13:47 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/06 15:24:57 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,12 +103,14 @@ void	philo_routine(t_prog *d)
 	d->threads.philo_death_watcher.is_created = true;
 	sem_post(d->sem.global.ready);
 	sem_wait(d->sem.global.start);
+	if (d->rules.num_philos == 1)
+	{
+		solo_philo(d);
+		return ;
+	}
 	while (p_think(d) && p_eat(d) && p_sleep(d))
 		;
-	if (d->rules.num_philos != 1)
-	{
-		sem_wait(d->sem.philo.death_value);
-		d->time.death = d->time.start;
-		sem_post(d->sem.philo.death_value);
-	}
+	sem_wait(d->sem.philo.death_value);
+	d->time.death = d->time.start;
+	sem_post(d->sem.philo.death_value);
 }
