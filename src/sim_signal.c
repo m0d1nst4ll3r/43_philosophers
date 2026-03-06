@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/02 11:39:58 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/02 13:10:42 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 16:01:00 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	wait_stop_received(t_prog *d)
 	unsigned int	i;
 
 	i = 0;
-	while (i < d->rules.num_philos)
+	while (i < d->rules.num_philos + 1)
 	{
 		sem_wait(d->sem.global.stop_received);
 		i++;

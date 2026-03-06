@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/03/03 14:03:47 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/03/05 14:12:22 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,7 @@ LINK		= -lpthread
 
 # Compiler settings
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
+CFLAGS		= -Wall -Wextra -Werror -g -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
 MAKEFLAGS	+= --no-print-directory

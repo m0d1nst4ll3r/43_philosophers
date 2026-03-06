@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:43:03 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/05 11:44:11 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/06 15:13:47 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,14 @@ static void	create_death_value_sem(t_prog *d)
 static void	signal_death(t_prog *d)
 {
 	sem_wait(d->sem.global.print);
-	if (d->stop)
+	if (!d->stop)
 	{
-		sem_post(d->sem.global.print);
-		return ;
+		gettimeofday(&d->time.current, NULL);
+		printf("%d %d died\n", ft_time_sub(d->time.current,
+				d->time.start) / 1000, d->philo_id + 1);
+		signal_stop(d);
+		wait_stop_received(d);
 	}
-	gettimeofday(&d->time.current, NULL);
-	printf("%d %d died\n",
-		ft_time_sub(d->time.current, d->time.start) / 1000, d->philo_id + 1);
-	signal_stop(d);
-	wait_stop_received(d);
 	sem_post(d->sem.global.print);
 }
 
@@ -107,7 +105,7 @@ void	philo_routine(t_prog *d)
 	sem_wait(d->sem.global.start);
 	while (p_think(d) && p_eat(d) && p_sleep(d))
 		;
-	if (d->stop)
+	if (d->rules.num_philos != 1)
 	{
 		sem_wait(d->sem.philo.death_value);
 		d->time.death = d->time.start;

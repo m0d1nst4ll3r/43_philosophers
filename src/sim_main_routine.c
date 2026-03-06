@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 19:13:58 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/05 11:52:03 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/05 16:00:47 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,17 @@ static void	*stuffed_watcher_thread(void *p)
 {
 	t_prog			*d;
 	unsigned int	i;
+	bool			stop;
 
 	d = p;
 	i = 0;
-	while (i < d->rules.num_philos)
+	stop = false;
+	while (!stop && i < d->rules.num_philos)
 	{
-		if (d->stop)
-			break ;
 		sem_wait(d->sem.global.stuffed);
+		sem_wait(d->sem.global.print);
+		stop = d->stop;
+		sem_post(d->sem.global.print);
 		i++;
 	}
 	sem_wait(d->sem.global.print);
@@ -76,6 +79,7 @@ void	main_routine(t_prog *d)
 	signal_start(d);
 	sem_wait(d->sem.global.stop);
 	d->stop = true;
+	sem_post(d->sem.global.stop_received);
 	sem_post(d->sem.global.stuffed);
 	sem_post(d->sem.global.forks);
 }
