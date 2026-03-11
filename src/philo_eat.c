@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 10:48:17 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/03/06 15:29:38 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/03/11 19:30:27 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,25 +40,21 @@ static bool	print_fork(t_philo *d, int fork_state)
 
 static bool	take_forks(t_philo *d)
 {
-	if (&d->mutex.lfork.obj < d->mutex.rfork)
-	{
-		pthread_mutex_lock(&d->mutex.lfork.obj);
-		if (!print_fork(d, 1))
-			return (false);
-		pthread_mutex_lock(d->mutex.rfork);
-		if (!print_fork(d, 2))
-			return (false);
-	}
-	else
-	{
-		pthread_mutex_lock(d->mutex.rfork);
-		if (!print_fork(d, 3))
-			return (false);
-		pthread_mutex_lock(&d->mutex.lfork.obj);
-		if (!print_fork(d, 4))
-			return (false);
-	}
+	pthread_mutex_lock(&d->mutex.lfork.obj);
+	if (!print_fork(d, 1))
+		return (false);
+	pthread_mutex_lock(d->mutex.rfork);
+	if (!print_fork(d, 2))
+		return (false);
 	return (true);
+}
+
+static bool	omae_wa_mou(t_philo *d)
+{
+	gettimeofday(&d->time.current, NULL);
+	return ((d->time.current.tv_sec == d->time.death.tv_sec
+			&& d->time.current.tv_usec >= d->time.death.tv_usec)
+		|| d->time.current.tv_sec > d->time.death.tv_sec);
 }
 
 bool	p_eat(t_philo *d)
@@ -66,7 +62,7 @@ bool	p_eat(t_philo *d)
 	if (!take_forks(d))
 		return (false);
 	pthread_mutex_lock(d->mutex.print);
-	if (*d->time.is_end_of_sim)
+	if (*d->time.is_end_of_sim || omae_wa_mou(d))
 	{
 		pthread_mutex_unlock(d->mutex.print);
 		pthread_mutex_unlock(&d->mutex.lfork.obj);
