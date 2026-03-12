@@ -6,7 +6,7 @@
 #    By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/15 16:45:41 by rapohlen          #+#    #+#              #
-#    Updated: 2026/03/06 15:26:05 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/03/11 19:51:21 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ CFILES		= main.c \
 			  sim_philo_routine.c \
 			  sim_philo_funcs.c \
 			  sim_philo_solo.c \
+			  sim_philo_eat.c \
 			  sim_main_routine.c \
 			  sim_signal.c \
 			  exit_cleanup_prog.c \
